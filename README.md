@@ -1,4 +1,4 @@
-# MathCAT Inteface For C/C++
+# C/C++ Interface for MathCAT
 
 <img src="logo.png" style="position: relative; top: 16px; z-index: -1;"> is a library that supports conversion of MathML to speech and braille among other things.
 
