@@ -1,0 +1,14 @@
+/target
+Cargo.lock
+.vscode/
+Example/
+c-example/.vs/
+c-example/.vscode/
+c-example/CppProperties.json
+c-example/Rules/
+c-example/libmathcat_c.dll
+c-example/mathcat.h
+c-example/test.exe
+c-example/test.obj
+c-example/test.pdb
+c-example/vc140.pdb
