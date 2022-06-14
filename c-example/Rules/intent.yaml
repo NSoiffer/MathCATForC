@@ -1,0 +1,104 @@
+---
+-
+  name: intent-exists
+  tag: "!*"     # matches any tag -- runs before specific rules
+  match: "@intent"
+  replace: [x: "process-intent(.)"]     # Warning: this is a special case hack and only "." is allowed
+
+-
+  name: turn-off
+  tag: "!*"     # turn off matching -- runs before specific rules
+  match: "ancestor-or-self::*[@subject][1][@subject='None']"    # do this only if there isn't some other subject first
+  replace:
+  - test:
+      - if: "*"
+        then:
+        - intent:
+            xpath-name: "name(.)"
+            children: [x: "*"]
+      - else_if: "text()"
+        then:
+        - intent:
+            xpath-name: "name(.)"
+            children: [x: "text()"]
+        else:
+        - intent:
+            xpath-name: "name(.)"
+            children: []
+
+-
+   include: "Intent/geometry.yaml"
+
+-
+   include: "Intent/linear-algebra.yaml"
+
+-
+  # this is last because other rules are/should be(???) more specific
+   include: "Intent/general.yaml"
+
+-
+  # we need to leave "math" here so that there is a parent to all the rules (otherwise we have a special case tests)
+  name: ignore-punctuation
+  tag: math
+  match: "*[1][self::m:mrow and count(*)=2 and *[2][translate(.,'.,;:?', '')='']]"
+  replace: [x: "*[1]/*[1]" ]
+
+-
+  name: default
+  tag: math
+  match: "."
+  replace:
+  - test:
+      if: "*"
+      then:
+      - intent:
+          name: "math"
+          children: [x: "*"]
+      else: [t: " "]    # empty math -- don't say anything
+
+
+-
+  name: default
+  tag: mstyle
+  match: "."
+  replace:
+  - test:
+      if: "*"
+      then: [x: "*"]
+      else: [t: " "]    # empty math -- don't say anything
+
+-
+  name: semantics
+  tag: "semantics"
+  match: "*[@encoding='MathML-Presentation']"
+  replace: 
+  - x: "*[@encoding='MathML-Presentation']/*[1]" 
+
+-
+  name: semantics-default
+  tag: "semantics"
+  match: .
+  replace: 
+  - x: "*[1]"
+
+-
+  # pass uncaught MathML through to the speech rules -- no point to renaming them
+  name: default
+  tag: "*"
+  match: "."
+  replace:
+  - test:
+      - if: "count(*) > 0"
+        then:
+        - intent:
+            xpath-name: "name(.)"
+            children: [x: "*"]
+      - else_if: "text()"
+        then:
+        - intent:
+            xpath-name: "name(.)"
+            children: [x: "text()"]
+        else:
+        - intent:
+            xpath-name: "name(.)"
+            children: []
