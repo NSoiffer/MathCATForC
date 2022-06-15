@@ -11,8 +11,8 @@ Warning: the interface is subject to change. This is my first attempt to add a C
 
 To use this project:
 1. build the project (`cargo build --release`)
-2. this will create a release build in target/release and also create a directory `c-example` with mathcat.h and the MathCAT `Rules` dir in it.
-3. try compiling the the sample program `test.c` in that directory or create your own using that as an example.
+2. this will create a release build in target/release and also create a directory `c-example` with `mathcat.h` and the MathCAT `Rules` dir in it.
+3. try compiling the the sample program `test.c` in that directory or create your own using that as an example. See some instructions for compiling in that file. 
 
 Alternatively, to avoid having to have a Rust build environment:
 1. download the MathCAT for C/C++ crate from https://crates.io/crates/mathcat_c
