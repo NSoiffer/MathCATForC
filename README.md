@@ -1,6 +1,8 @@
 # C/C++ Interface for MathCAT
 
-<img src="logo.png" style="position: relative; top: -6px; z-index: -1;vertical-align:middle"> is a library that supports conversion of MathML to speech and braille among other things.
+<img src="logo.png" style="position: relative; top: 16px; z-index: -1;"> 
+<br><!-- vertical alignment does seems to get pushed into the github front page view, so trying a separate line -->
+is a library that supports conversion of MathML to speech and braille among other things.
 
 This project adds a C/C++ interface to MathCAT.
 Visit [the MathCAT project page](https://nsoiffer.github.io/MathCAT/) for more info or if you want to play around with MathCAT's capabilities, [try out the demo](https://nsoiffer.github.io/MathCATDemo/).
