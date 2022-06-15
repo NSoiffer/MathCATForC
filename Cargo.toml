@@ -3,6 +3,9 @@ name = "mathcat_c"
 version = "0.1.0"
 authors = ["Neil Soiffer <soiffer@alum.mit.edu>"]
 edition = "2021"
+license = "MIT"
+description = "C/C++ interface for MathCAT (for MathCAT info, see crates.io or nsoiffer.github.io/MathCAT)"
+
 
 [dependencies.mathcat]
 version = "0.1.23"
