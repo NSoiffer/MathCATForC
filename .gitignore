@@ -10,3 +10,5 @@ c-example/test.exe
 c-example/test.obj
 c-example/test.pdb
 c-example/vc140.pdb
+c-example/*zip
+c-example/Release
