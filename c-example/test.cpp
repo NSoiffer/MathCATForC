@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 bool singleTest(const char* mathml, bool doPrint) {
-    const char* returnedMathML = SetMathML("<math><mo>(</mo><mfrac linethickness='0'><mi>m</mi><mi>n</mi></mfrac><mo>)</mo></math>");
+    const char* returnedMathML = SetMathML(mathml);
     if (returnedMathML == "") {
         const char* message = GetError();
         printf("Illegal MathML. Message is: %s\n", message);
