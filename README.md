@@ -17,5 +17,5 @@ To use this project:
 3. try compiling the the sample program `test.c` in that directory or create your own using that as an example. See some instructions for compiling in that file. 
 
 Alternatively, to avoid having to have a Rust build environment:
-download the a prebuilt dll from [releases](https://github.com/NSoiffer/MathCATForC/tags). They include the dll and c-header file, a test/example program, and the Rules directory needed by MathCAT. If you need a binary not listed there, file an issue.
+download the a prebuilt dll from [releases](https://github.com/NSoiffer/MathCATForC/tags). The Release-_version_-_target_.zip file includes the dll, c-header file, a test/example program, and the Rules directory needed by MathCAT. It is probably best to use the latest release at that link. If you need a target/dll not listed there, file an issue.
 
