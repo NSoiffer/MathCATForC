@@ -17,5 +17,5 @@ To use this project:
 3. try compiling the the sample program `test.c` in that directory or create your own using that as an example. See some instructions for compiling in that file. 
 
 Alternatively, to avoid having to have a Rust build environment:
-1. download the MathCAT for C/C++ crate from https://crates.io/crates/mathcat_c
-2. download mathcat.h and the Rules from [here](https://github.com/NSoiffer/MathCATForC/tree/main/c-example)
+download the a prebuilt dll from [releases](https://github.com/NSoiffer/MathCATForC/tags). They include the dll and c-header file, a test/example program, and the Rules directory needed by MathCAT. If you need a binary not listed there, file an issue.
+
