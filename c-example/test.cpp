@@ -3,10 +3,29 @@
 //   LD_LIBRARY_PATH="../target/release/" ./test
 // where "../target/release" is the location of libmathcat_c.dll
 // Compiling seems a bit touchy -- sometimes I needed to copy libmathcat_c.dll to the current dir
+//
+// To run
+// ./test -- prints the MathML input, the speech output (assuming no speech markup), and Nemeth braille
+// test takes one optional argument. If present, repeats that input the number of times given.
+// Right now, it only tells the total time and time per call, but I want to add something for
+//   memory used so it can indicate a memory leak.
 
 
 #include "mathcat.h"
 #include <stdio.h>
+#include <cstring>
+
+
+// A convenient wrapper that deals with errors and memory
+void SetMathCatPreference(const char* pref, const char* value) {
+    const char* status = SetPreference(pref, value);
+    if (status == "") {
+        const char* message = GetError();
+        printf("Error setting %s preference to %s --ignoring... Message is: %s\n", pref, value, message);
+        FreeMathCATString((char*)message);
+    }
+    FreeMathCATString((char*)status);
+}
 
 bool singleTest(const char* mathml, bool doPrint) {
     const char* returnedMathML = SetMathML(mathml);
@@ -19,45 +38,36 @@ bool singleTest(const char* mathml, bool doPrint) {
     }
     FreeMathCATString((char*)returnedMathML);
 
-    const char* status = SetPreference("SpeechStyle", "SimpleSpeak");
-    if (status == "") {
-        const char* message = GetError();
-        printf("Error setting SpeechStyle preference --ignoring... Message is: %s\n", message);
-        FreeMathCATString((char*)message);
-    }
-    FreeMathCATString((char*)status);
+    SetMathCatPreference("Language", "en");
+    SetMathCatPreference("SpeechStyle", "SimpleSpeak");
+
     
     const char* speech = GetSpokenText();
-    if (speech == "") {
+    if (!*speech) {
         const char* message = GetError();
         printf("Error in speech --ignoring... Message is: %s\n", message);
         FreeMathCATString((char*)message);
     } else if (doPrint) {
-        printf("MathCAT speech: %s\n", speech);
+        printf("SimpleSpeak speech: '%s'\n", speech);
     }
     FreeMathCATString((char*)speech);
 
-    status = SetPreference("BrailleCode", "Nemeth");
-    if (status == "") {
-        const char* message = GetError();
-        printf("Error setting BrailleCode preference --ignoring... Message is: %s\n", message);
-        FreeMathCATString((char*)message);
-    }
-    FreeMathCATString((char*)status);
+    SetMathCatPreference("BrailleCode", "Nemeth");
 
     const char* braille = GetBraille("");
-    if (braille == "") {
+    if (!*braille) {
         const char* message = GetError();
         printf("Error in braille --ignoring... Message is: %s\n", message);
         FreeMathCATString((char*)message);
     } else if (doPrint) {
-        printf("MathCAT braille: %s\n", braille);
+        printf("Nemeth braille: %s\n", braille);
     }
     FreeMathCATString((char*)braille);
     return true;
 }
 
 #include <time.h>
+
 void testForMemoryLeak(const char* mathml, int nLoops) {
     clock_t begin = clock();
     for (int i=0; i< nLoops; i++) {
@@ -89,7 +99,7 @@ int main(int argc, char *argv[]) {
 
     if (argc > 1) {    // argv[0] is command
         printf("Looping %d times...\n", atoi(argv[1]));
-        testForMemoryLeak(mathml, atoi(argv[1]));
+        testForMemoryLeak(mathml, atoi(argv[1])-1); // already did once
     }
     
     return EXIT_SUCCESS;
