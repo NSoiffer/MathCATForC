@@ -5,15 +5,16 @@
     SpeechSound: None           # make a sound when starting/ending math speech -- None, Beep
     Verbosity: Medium           # Terse, Medium, Verbose
     MathRate: 100               # Change from text speech rate (%)
+    PauseFactor: 100            # Change from normal pause length (%)
     SpeechStyle: ClearSpeak     # Any known speech style (falls back to ClearSpeak)
     SubjectArea: General        # FIX: still working on this
-    Chemistry: SpellOut         # SpellOut (H 2 0), AsCompound (Water), Off (H sub 2 O)
+    Chemistry: SpellOut         # SpellOut (H 2 0), AsCompound (Water) -- not implemented, Off (H sub 2 O)
 
     ClearSpeak:                 # see ClearSpeak speak for meanings
       CapitalLetters: Auto      # SayCaps or use pitch
       AbsoluteValue: Auto       # AbsEnd, Cardinality, Determinant
-      Fraction: Auto            # Ordinal, Over, FracOver, General, EndFrac, GeneralEndFrac, OverEndFrac, Per
-      Exponent: Auto            # Ordinal, OrdinalPower, AfterPower
+      Fractions: Auto           # Ordinal, Over, FracOver, General, EndFrac, GeneralEndFrac, OverEndFrac, Per
+      Exponents: Auto           # Ordinal, OrdinalPower, AfterPower
       Roots: Auto               # PosNegSqRoot, RootEnd, PosNegSqRootEnd
       Functions: Auto           # None
       Trig: Auto                # TrigInverse, ArcTrig
@@ -38,7 +39,7 @@
     MathSpeak: Verbose          # Brief, SuperBrief
 
     SpeechOverrides:
-      CapitalLetters: "cap"     # word to say as a prefix for capital letters unless in unicode.yaml; empty string leaves it to screen reader
+      CapitalLetters: ""        # word to say as a prefix/postfix for capital letters; empty string leaves it calling AT with Unicode fallback 
       LeftParen: ""             # word used as override (not implemented)
       RightParen: ""            # word used as override (not implemented)
 

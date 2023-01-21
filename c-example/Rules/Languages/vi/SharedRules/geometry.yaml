@@ -7,12 +7,12 @@
   - test:
       if: "$Verbosity='Verbose'"
       then:
-      - t: "the line segment from"
+      - T: "đoạn thẳng từ"
       - x: "*[1]"
-      - t: "to"
+      - T: "đến"
       - x: "*[2]"
       else:
-      - t: "line segment"
+      - T: "đoạn thẳng"
       - x: "*[1]"
       - x: "*[2]"
 
@@ -23,12 +23,12 @@
   - test:
       if: "$Verbosity='Verbose'"
       then:
-      - t: "the ray from"
+      - T: "tia từ"
       - x: "*[1]"
-      - t: "to"
+      - T: "đến"
       - x: "*[2]"
       else:
-      - t: "ray"
+      - T: "tia"
       - x: "*[1]"
       - x: "*[2]"
 
@@ -36,10 +36,10 @@
   tag: arc
   match: "."
   replace:
-  - test:
-      if: "$Verbosity='Verbose'"
-      then: [{t: "the"}]
-  - t: "arc"
+  #      if: "$Verbosity='Verbose'"
+  #      then: [T: "the"]
+  - T: "vòng cung"
+    #   - test:
   - x: "*[1]"
   - x: "*[2]"
 
@@ -50,9 +50,9 @@
   - test:
       if: "$Verbosity='Verbose'"
       then:
-      - t: "the measure of the angle"
+      - T: "số đo của góc"
       else:
-      - t: "measure of angle"
+      - T: "số đo của góc"
   - x: "*[1]"
   - x: "*[2]"
   - x: "*[3]"

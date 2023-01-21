@@ -22,7 +22,7 @@
   tag: mrow
   match: "not(*)"
   replace:
-  - t: " " # say nothing -- placeholder
+  - T: ' ' # say nothing -- placeholder
 
 - name: default
   tag: mrow
@@ -43,7 +43,7 @@
   tag: ms
   match: "."
   replace:
-  - t: "the string"
+  - T: 'string'
   - pause: short
   - x: "text()"
 
@@ -60,7 +60,7 @@
   - x: "*[1]"
   - test:
       if: "$Verbosity!='Terse' or not(*[2][self::m:mn])" # just say "x 1" for terse vs "x sub 1"
-      then: [{t: "sub"}]
+      then: [{T: 'indeks'}]
   - x: "*[2]"
 
 - name: default
@@ -68,9 +68,9 @@
   match: "."
   replace:
   - x: "*[1]"
-  - t: "sub"
+  - T: 'indeks'
   - x: "*[2]"
-  - t: "end sub"
+  - T: 'akhir indeks'
   - pause: short
 
 - name: default
@@ -78,22 +78,22 @@
   match: "."
   replace:
   - x: "*[1]"
-  - t: sub
+  - T: indeks
   - x: "*[2]"
-  - t: "raised to the"
+  - T: 'diangkat ke'
   - x: "*[3]"
-  - t: power
+  - T: pangkat
 - name: default
   tag: munder
   match: "."
   replace:
   - test:
       if: "not(IsNode(*[1], 'simple'))"
-      then: [{t: "modified"}]
+      then: [{T: 'diubah'}]
   - x: "*[1]"
-  - t: "with"
+  - T: 'dengan'
   - x: "*[2]"
-  - t: below
+  - T: di bawah
 
 - name: default
   tag: mover
@@ -101,11 +101,11 @@
   replace:
   - test:
       if: "not(IsNode(*[1], 'simple'))"
-      then: [{t: "modified"}]
+      then: [{T: 'diubah'}]
   - x: "*[1]"
-  - t: "with"
+  - T: 'dengan'
   - x: "*[2]"
-  - t: "above"
+  - T: 'garis atas'
 
 - name: default
   tag: munderover
@@ -113,13 +113,13 @@
   replace:
   - test:
       if: "not(IsNode(*[1], 'simple'))"
-      then: [{t: "modified"}]
+      then: [{T: 'diubah'}]
   - x: "*[1]"
-  - t: "with"
+  - T: 'dengan'
   - x: "*[2]"
-  - t: "below and"
+  - T: 'di bawah dan'
   - x: "*[3]"
-  - t: "above"
+  - T: 'di atas'
 
 - name: default
   #   Here we support up to 2 prescripts and up to 4 postscripts -- that should cover all reasonable cases
@@ -277,24 +277,24 @@
   variables: [{IsColumnSilent: false()}]
   match: "."
   replace:
-  - t: "table with"
+  - T: 'tabel dengan'
   - x: count(*)
   - test:
       if: count(*)=1
-      then: {t: "row"}
-      else: {t: "rows"}
-  - t: and
+      then: {T: 'baris'}
+      else: {T: 'baris'}
+  - T: and
   - x: "count(*[1]/*)"
   - test:
       if: "count(*[1]/*)=1"
-      then: {t: "column"}
-      else: {t: "columns"}
+      then: {T: 'kolom'}
+      else: {T: 'kolom'}
   - pause: long
   - x: "*"
 
-- name: default
+- # this may get called from navigation -- in that case, there is no context to speak the row #, so don't do it
   # callers/context should do that.
-  # this may get called from navigation -- in that case, there is no context to speak the row #, so don't do it
+  name: default
   tag: mtr
   match: "."
   replace:
@@ -304,120 +304,121 @@
   tag: mtd
   match: "."
   replace:
-  - t: "column"
+  - T: 'kolom'
   - x: "count(preceding-sibling::*)+1"
   - pause: medium
   - x: "*" # speak the entry
   - pause: long
 
-- name: default
+- # Note: @notation can contain more than one value
   # The ordering below is the order in which words come out when there is more than one value
-  # Note: @notation can contain more than one value
+  #
+  name: default
   tag: menclose
   match: "."
   replace:
   - test:
       if: ".[contains(concat(' ', normalize-space(@notation), ' '), ' box ')]"
-      then: [{t: box}, {pause: short}]
+      then: [{T: kotak}, {pause: short}]
   - test:
       if: ".[contains(@notation,'roundedbox')]"
-      then: [{t: round box}, {pause: short}]
+      then: [{T: kotak bulat}, {pause: short}]
   - test:
       if: ".[contains(@notation,'circle')]"
-      then: [{t: circle}, {pause: short}]
+      then: [{T: lingkaran}, {pause: short}]
   - test:
       if: ".[ contains(concat(' ', normalize-space(@notation), ' '), ' left ') or contains(concat(' ', normalize-space(@notation), ' '), ' right ') or contains(@notation,'top') or contains(@notation,'bottom') ]"
       then:
-      - t: line on
+      - T: baris aktif
       - test:
           if: ".[contains(concat(' ', normalize-space(@notation), ' '), ' left ')]"
-          then: [{t: left}, {pause: short}]
+          then: [{T: kiri}, {pause: short}]
       - test:
           if: ".[contains(concat(' ', normalize-space(@notation), ' '), ' right ')]"
-          then: [{t: right}, {pause: short}]
+          then: [{T: kanan}, {pause: short}]
       - test:
           if: ".[contains(@notation,'top')]"
-          then: [{t: top}, {pause: short}]
+          then: [{T: atas}, {pause: short}]
       - test:
           if: ".[contains(@notation,'bottom')]"
-          then: [{t: bottom}, {pause: short}]
+          then: [{T: bawah}, {pause: short}]
   - test:
       if: ".[ contains(@notation,'updiagonalstrike') or contains(@notation,'downdiagonalstrike') or contains(@notation,'verticalstrike') or contains(@notation,'horizontalstrike') ]"
       then:
       - test:
           if: ".[contains(@notation,'updiagonalstrike') and contains(@notation,'downdiagonalstrike')]"
-          then: [{spell: "'x'"}, {pause: short}] # seems better to say 'x cross out' than 'up diagonal, down diagonal cross out'
+          then: [{spell: x}, {pause: short}] # seems better to say 'x cross out' than 'up diagonal, down diagonal cross out'
           else:
           - test:
               if: ".[contains(@notation,'updiagonalstrike')]"
-              then: [{t: up diagonal}, {pause: short}]
+              then: [{T: diagonal ke atas}, {pause: short}]
           - test:
               if: ".[contains(@notation,'downdiagonalstrike')]"
-              then: [{t: down diagonal}, {pause: short}]
+              then: [{T: diagonal ke bawah}, {pause: short}]
       - test:
           if: ".[contains(@notation,'verticalstrike')]"
-          then: [{t: vertical}, {pause: short}]
+          then: [{T: vertikal}, {pause: short}]
       - test:
           if: ".[contains(@notation,'horizontalstrike')]"
-          then: [{t: horizontal}, {pause: short}]
-      - t: cross out
+          then: [{T: horizontal}, {pause: short}]
+      - T: cross out
       - pause: short
   - test:
       if: ".[contains(@notation,'uparrow')]"
-      then: [{t: up arrow}, {pause: short}]
+      then: [{T: panah atas}, {pause: short}]
   - test:
       if: ".[contains(concat(' ', normalize-space(@notation), ' '), ' downarrow ')]"
-      then: [{t: down arrow}, {pause: short}]
+      then: [{T: panah bawah}, {pause: short}]
   - test:
       if: ".[contains(@notation,'leftarrow')]"
-      then: [{t: left arrow}, {pause: short}]
+      then: [{T: panah kiri}, {pause: short}]
   - test:
       if: ".[contains(concat(' ', normalize-space(@notation), ' '), ' rightarrow ')]"
-      then: [{t: right arrow}, {pause: short}]
+      then: [{T: panah kanan}, {pause: short}]
   - test:
       if: ".[contains(@notation,'northeastarrow')]"
-      then: [{t: northeast arrow}, {pause: short}]
+      then: [{T: panah timur laut}, {pause: short}]
   - test:
       if: ".[contains(concat(' ', normalize-space(@notation), ' '), ' southeastarrow ')]"
-      then: [{t: southeast arrow}, {pause: short}]
+      then: [{T: panah tenggara}, {pause: short}]
   - test:
       if: ".[contains(concat(' ', normalize-space(@notation), ' '), ' southwestarrow ')]"
-      then: [{t: southwest arrow}, {pause: short}]
+      then: [{T: panah barat daya}, {pause: short}]
   - test:
       if: ".[contains(@notation,'northwestarrow')]"
-      then: [{t: northwest arrow}, {pause: short}]
+      then: [{T: panah barat laut}, {pause: short}]
   - test:
       if: ".[contains(@notation,'updownarrow')]"
-      then: [{t: double ended vertical arrow}, {pause: short}]
+      then: [{T: panah vertikal ujung ganda}, {pause: short}]
   - test:
       if: ".[contains(@notation,'leftrightarrow')]"
-      then: [{t: double ended horizontal arrow}, {pause: short}]
+      then: [{T: panah horizontal ujung ganda}, {pause: short}]
   - test:
       if: ".[contains(@notation,'northeastsouthwestarrow')]"
-      then: [{t: double ended up diagonal arrow}, {pause: short}]
+      then: [{T: panah diagonal atas ujung ganda}, {pause: short}]
   - test:
       if: ".[contains(@notation,'northwestsoutheastarrow')]"
-      then: [{t: double ended down diagonal arrow}, {pause: short}]
+      then: [{T: panah diagonal bawah ujung ganda}, {pause: short}]
   - test:
       if: ".[contains(@notation,'actuarial')]"
-      then: [{t: actuarial symbol}, {pause: short}]
+      then: [{T: simbol aktuaria}, {pause: short}]
   - test:
       if: ".[contains(@notation,'madrub')]"
-      then: [{t: arabic factorial symbol}, {pause: short}]
+      then: [{T: simbol faktorial arab}, {pause: short}]
   - test:
       if: ".[contains(@notation,'phasorangle')]"
-      then: [{t: phasor angle}, {pause: short}]
+      then: [{T: sudut fasor}, {pause: short}]
   - test:
       if: ".[contains(@notation,'longdiv') or not(@notation) or normalize-space(@notation) ='']" # default
-      then: [{t: long division symbol}, {pause: short}]
+      then: [{T: simbol pembagian panjang}, {pause: short}]
   - test:
       if: ".[contains(@notation,'radical')]"
-      then: [{t: square root}, {pause: short}]
-  - t: enclosing
+      then: [{T: akar pangkat dua}, {pause: short}]
+  - T: melampirkan
   - x: "*"
   - test:
       if: "$Impairment = 'Blindness' and ( $SpeechStyle != 'SimpleSpeak' or not(IsNode(*[1], 'leaf')) )"
-      then: [{t: end enclosure}]
+      then: [{T: penutup akhir}]
   - pause: short
 
 - name: semantics
@@ -444,11 +445,11 @@
   match: count(*)>0
   replace:
   - x: "translate(name(.), '-', ' ')"
-  - t: "of"
+  - T: 'dari'
   - pause: short
   - insert:
       nodes: "*"
-      replace: [{t: "comma"}, {pause: auto}]
+      replace: [{T: 'koma'}, {pause: auto}]
 
 - name: default-text
   # unknown leaf -- just speak the text -- could be a literal intent

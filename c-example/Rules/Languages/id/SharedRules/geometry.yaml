@@ -1,5 +1,4 @@
 ---
-
 - name: line-segment
   tag: line-segment
   match: "."
@@ -7,12 +6,12 @@
   - test:
       if: "$Verbosity='Verbose'"
       then:
-      - t: "the line segment from"
+      - T: 'segmen garis dari'
       - x: "*[1]"
-      - t: "to"
+      - T: 'ke'
       - x: "*[2]"
       else:
-      - t: "line segment"
+      - T: 'segmen garis'
       - x: "*[1]"
       - x: "*[2]"
 
@@ -23,12 +22,12 @@
   - test:
       if: "$Verbosity='Verbose'"
       then:
-      - t: "the ray from"
+      - T: 'sinar dari'
       - x: "*[1]"
-      - t: "to"
+      - T: 'ke'
       - x: "*[2]"
       else:
-      - t: "ray"
+      - T: 'ray'
       - x: "*[1]"
       - x: "*[2]"
 
@@ -38,8 +37,8 @@
   replace:
   - test:
       if: "$Verbosity='Verbose'"
-      then: [{t: "the"}]
-  - t: "arc"
+      then: [{T: ''}]
+  - T: 'busur'
   - x: "*[1]"
   - x: "*[2]"
 
@@ -50,10 +49,9 @@
   - test:
       if: "$Verbosity='Verbose'"
       then:
-      - t: "the measure of the angle"
+      - T: 'ukuran sudut'
       else:
-      - t: "measure of angle"
+      - T: 'ukuran sudut'
   - x: "*[1]"
   - x: "*[2]"
   - x: "*[3]"
-

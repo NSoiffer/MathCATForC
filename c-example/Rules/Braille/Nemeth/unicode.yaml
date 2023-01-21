@@ -138,7 +138,6 @@
  - "$": [t: "⠈⠎"]               # 0x24
  - "%": [t: "⠈⠴"]               # 0x25
  - "&": [t: "⠸⠯"]               # 0x26
- - "*": [t: "⠈⠼"]               # 0x2a
  - "+": [t: "⠬"]                # 0x2b
  - "/": [t: "⠸⠌"]               # 0x2f
  - "<": [t: "⠐⠅"]               # 0x3c
@@ -176,6 +175,7 @@
  - "←": [t: "⠫⠪⠒⠒"]             # 0x2190
  - "ⅆ": [t: "⠙"]                # 0x2146
  - "ⅇ": [t: "⠑"]                # 0x2147
+ - "ⅈ": [t: "⠊"]                # 0x2148
  - "(": [t: "⠷"]                # 0x28
  - ")": [t: "⠾"]                # 0x29
  - "[": [t: "⠈⠷"]               # 0x5b
@@ -295,7 +295,7 @@
  - "÷": [t: "⠨⠌"]               # 0x00F7 (Division sign)
       # rule 43b about spaces (references rule 42)
       # tests are ugly because an invisible times might have been inserted and we need to skip that
- - "—": [t: "⠤⠤"]               # 0x2014 (Em dash)
+ - "—": [t: "P⠤⠤"]               # 0x2014 (Em dash)
  - "―":                          # 0x2015 (Horizontal bar)
     - test:
         if:
@@ -352,7 +352,14 @@
         if: "not(following-sibling::*[1][IsBracketed(., '', '')]) or preceding-sibling::*[1][IsInDefinition(BaseNode(.), 'FunctionNames')]" 
         then: [t: "W"]
  - "⁢": [t: ""]                  # 0x2062 -- what's right???  "⠈⠡" (times) is not right
- - "⁣": [t: ""]                  # 0x2063  -- what's right???
+ - "⁣":                         # 0x2063 (Invisible Comma -- treat like a normal comma when in a subscript[issue #40]) else ignore
+    - test:
+          # test if first ancestor that isn't an mrow is a script tag (rule 78)
+      - if: "self::m:mn"
+        then: [t: ""]
+      - else_if: "ancestor-or-self::*[not(parent::m:mrow)][1][parent::m:msub or parent::m:msup or parent::m:msubsup or parent::m:mmultiscripts][preceding-sibling::*]"
+        then: [t: "⠪"]        # Rule 78
+        else: [t: ""]
  - "⁤": [t: ""]                 # 0x2064
 
  - "ℏ": [t: "⠈⠓"]               # 0x210F (Planck constant over two pi)
@@ -367,6 +374,7 @@
  - "∃": [t: "⠈⠿"]               # 0x2203 (There exists)
  - "∄": [t: "⠌⠈⠿"]              # 0x2204 (There does not exist)
  - "∅": [t: "⠸⠴"]               # 0x2205 (Empty set)
+ - "∏": [t: "⠨⠠⠏"]              # 0x220F (N-ary product)
  - "∑": [t: "⠨⠠⠎"]              # 0x2211 (N-ary summation)
  - "∞": [t: "⠠⠿"]               # 0x221E (Infinity)
  - "∟": [t: "⠫⠪⠨⠗⠻"]            # 0x221F (Right angle)

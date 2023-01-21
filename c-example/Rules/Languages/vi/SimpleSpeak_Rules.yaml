@@ -4,52 +4,53 @@
   tag: square-root
   match: "."
   replace:
+  # - test:
+  #     if: "$Verbosity!='Terse'"
+  #     then: {t: the}
+  - T: căn bậc hai
   - test:
       if: "$Verbosity!='Terse'"
-      then: {t: the}
-  - t: square root
-  - test:
-      if: "$Verbosity!='Terse'"
-      then: {t: of}
+      then: {T: của}
       else: {pause: short}
   - x: "*[1]"
   - test:
       if: IsNode(*[1], 'leaf')
       then: [{pause: short}]
-      else: [{t: end root}, {pause: short}]
+      else: [{T: hết căn}, {pause: short}]
 
 - name: default
   tag: root
   match: "."
   replace:
-  - test:
-      if: "$Verbosity!='Terse'"
-      then: [{t: the}]
+  # - test:
+  #     if: "$Verbosity!='Terse'"
+  #     then: [T: the]
   - test:
       if: "*[2][self::m:mn]"
       then_test:
       - if: "*[2][text()='2']"
-        then: [{t: square root}]
+        then: [{T: căn bậc hai}]
       - else_if: "*[2][text()='3']"
-        then: [{t: cube root}]
+        then: [{T: căn bậc ba}]
       - else_if: "*[2][not(contains(., '.'))]"
-        then: [{x: "ToOrdinal(*[2])"}, {t: root}]
+        then: [{T: căn bậc}, {x: "ToOrdinal(*[2])"}]
       else:
       - test:
           if: "*[2][self::m:mi][string-length(.)=1]"
           then:
           - x: "*[2]"
-          - pronounce: [{text: "-th"}, {ipa: "θ"}, {sapi5: "th"}, {eloquence: "T"}]
+          #- pronounce: [{text: "-th"}, {ipa: "θ"}, {sapi5: "th"}, {eloquence: "T"}]
           else: [{x: "*[2]"}]
-      - t: root
+      - T: căn
+    # - test: 
   - test:
       if: "$Verbosity!='Terse'"
-      then: [{t: of}]
+      then: [{T: của}]
   - x: "*[1]"
   - test:
       if: IsNode(*[1], 'leaf')
       then: [{pause: short}]
-      else: [{t: end root}, {pause: short}]
+      else: [{T: hết căn}, {pause: short}]
 
 # Fraction rules
 # Mixed numbers mostly "just work" because the invisible char reads as "and" and other parts read properly on their own
@@ -77,7 +78,7 @@
   - "not(ancestor::*[name() != 'mrow'][1]/self::m:fraction)" # FIX: can't test for mrow -- what should be used???
   replace:
   - x: "*[1]"
-  - t: over
+  - T: trên
   - x: "*[2]"
   - pause: short
 
@@ -85,19 +86,19 @@
   tag: fraction
   match: "."
   replace:
-  - t: fraction
+  - T: phân số
   - pause: short
   - x: "*[1]"
   - test:
       if: "not(IsNode(*[1],'leaf'))"
       then: [{pause: short}]
-  - t: over
+  - T: trên
   - test:
       if: "not(IsNode(*[2],'leaf'))"
       then: [{pause: short}]
   - x: "*[2]"
   - pause: short
-  - t: end fraction
+  - T: hết phân số
   - pause: medium
 
 # rules for functions raised to a power
@@ -107,7 +108,7 @@
   tag: inverse-function
   match: "."
   replace:
-  - t: inverse
+  - T: hàm nghịch đảo
   - x: "*[1]"
 
 - name: function-squared-or-cubed
@@ -120,22 +121,22 @@
   - bookmark: "*[2]/@id"
   - test:
       if: "*[2][text()=2]"
-      then: {t: squared}
-      else: {t: cubed}
+      then: {T: bình phương}
+      else: {T: lập phương}
 - name: function-power
   tag: power
   match:
   - "following-sibling::*[1][self::m:mo][text()='⁡']" #invisible function apply
   replace:
-  - test:
-      if: "$Verbosity!='Terse'"
-      then: {t: the}
+  # - test: 
+  #     if: "$Verbosity!='Terse'"
+  #    then: {T: the}
   - bookmark: "*[2]/@id"
   - test:
       if: "*[2][self::m:mn][not(contains(., '.'))]"
       then: [{x: "ToOrdinal(*[2])"}]
       else: [{x: "*[2]"}]
-  - t: power of
+  - T: mũ
   - pause: short
   - x: "*[1]"
 
@@ -148,15 +149,15 @@
   - bookmark: "*[2]/@id"
   - test:
       if: "*[2][text()=2]"
-      then: {t: squared}
-      else: {t: cubed}
+      then: {T: bình phương}
+      else: {T: lập phương}
 
 - name: simple-integer
   tag: power
   match: "*[2][self::m:mn][not(contains(., '.'))]"
   replace:
   - x: "*[1]"
-  - t: to the
+  - T: mũ
   - test:
       if: "*[2][.>0]"
       then: {x: "ToOrdinal(*[2])"}
@@ -168,23 +169,23 @@
   - "     *[1][self::m:mn][not(contains(., '.'))]]"
   replace:
   - x: "*[1]"
-  - t: to the
+  - T: mũ
   - x: "*[2]"
 - name: simple-var
   tag: power
   match: "*[2][self::m:mi][string-length(.)=1]"
   replace:
   - x: "*[1]"
-  - t: to the
+  - T: mũ
   - x: "*[2]"
-  - pronounce: [{text: "-th"}, {ipa: "θ"}, {sapi5: "th"}, {eloquence: "T"}]
+  #- pronounce: [{text: "-th"}, {ipa: "θ"}, {sapi5: "th"}, {eloquence: "T"}]
 
 - name: simple
   tag: power
   match: "IsNode(*[2], 'leaf')"
   replace:
   - x: "*[1]"
-  - t: to the
+  - T: mũ
   - x: "*[2]"
 
 - name: nested
@@ -199,18 +200,18 @@
   - "    ]"
   replace:
   - x: "*[1]"
-  - t: raised to the
+  - T: lũy thừa
   - x: "*[2]"
   - pause: short
-  - t: end exponent
+  - T: hết lũy thừa
 - name: default
   tag: power
   match: "."
   replace:
   - x: "*[1]"
-  - t: raised to the
+  - T: mũ
   - x: "*[2]"
-  - t: power
+  #- T: power
 
 #
 # Some rules on mrows
@@ -222,24 +223,24 @@
   - test:
     - if: "count(*)=0"
       then:
-      - test:
-          if: "$Verbosity!='Terse'"
-          then: {t: the}
-      - t: empty set
+      # - test: 
+      #   if: "$Verbosity!='Terse'"
+      #  then: {T: the}
+      - T: tập hợp rỗng
     - else_if: "count(*[1]/*)=3 and *[1]/*[2][self::m:mo][text()=':' or text()='|' or text()='∣']"
       then:
-      - test:
-          if: "$Verbosity!='Terse'"
-          then: {t: the}
-      - t: set of all
+      # - test: 
+      #   if: "$Verbosity!='Terse'"
+      #  then: {T: the}
+      - T: tập hợp của
       - x: "*[1]/*[1]"
-      - t: such that
+      - T: sao cho
       - x: "*[1]/*[3]"
       else:
-      - test:
-          if: "$Verbosity!='Terse'"
-          then: {t: the}
-      - t: set
+      #     if: "$Verbosity!='Terse'"
+      #    then: {T: the}
+      - T: tập hợp
+        #   - test: 
       - x: "*[1]"
 
 - name: times
@@ -261,7 +262,7 @@
   - "    IsBracketed(., '(', ')') or IsBracketed(., '[(]', ']') or IsBracketed(., '|', '|')]" # followed by parens
   - " )"
   replace:
-  - t: times
+  - T: lần
 
 - name: no-say-parens
   tag: mrow

@@ -4,16 +4,16 @@
    tag: msqrt
    match: "."
    replace: 
-   - t: "1⠩"
+   - T: "1⠩"
    - x: "*"
-   - t: "1⠬"
+   - T: "1⠱"
 
 -
    name: default
    tag: mroot
    match: "."
    replace: 
-   - t: "1⠩⠔"
+   - T: "1⠩⠔"
    - test:
       if:   # FIX: need to add arbitrary shapes here (see also msub/msup)
       - "*[2][self::m:mn or"
@@ -26,12 +26,12 @@
       then:
       - x: "*[2]"
       else:
-      - t: "1⠣"
+      - T: "1⠣"
       - x: "*[2]"
-      - t: "1⠜"
-   - t: "#"    # signal end of script/numeric mode
+      - T: "1⠜"
+   - T: "#"    # signal end of script/numeric mode
    - x: "*[1]"
-   - t: "1⠬"
+   - T: "1⠱"
         
                
 # Fraction rules
@@ -47,7 +47,7 @@
       - "*[1][self::m:mn][not(contains(., '.'))]   and" 
       - "*[2][self::m:mn][not(contains(., '.'))]"
    replace: 
-   - t: "#"    # signal end of previous numeric mode
+   - T: "#"    # signal end of previous numeric mode
    - x: "*[1]"
    - t: "N⠌"
    - x: "*[2]"
@@ -57,9 +57,9 @@
    tag: mfrac
    match: "*[1][self::m:mn] and *[2][self::m:mn]"
    replace: 
-   - t: "#"    # signal end of any previous numeric mode (probably not needed, but...)
+   - T: "#"    # signal end of any previous numeric mode (probably not needed, but...)
    - x: "*[1]"
-   - t: "N⠌"
+   - T: "N⠌"
    - x: "*[2]"
 
 -
@@ -67,11 +67,11 @@
    tag: mfrac
    match: "."
    replace: 
-   - t: "1⠷"
+   - T: "1⠆"
    - x: "*[1]"
-   - t: "⠨⠌"
+   - T: "⠌"
    - x: "*[2]"
-   - t: "1⠾"
+   - T: "1⠰"
 
 
 #
@@ -295,7 +295,7 @@
       - if: "*[2][text()='_' or text()='¯']"
         then: [t: "⠱"]
       - else_if: "*[2][text()='→']"
-        then: [t: "⠘⠱"]
+        then: [T: "⠨⠔⠳⠕"]
       - else_if: "*[2][text()='.' or text()='˙']"
         then: [t: "⠘⠲"]
       - else_if: "*[2][text()='~']"
@@ -331,12 +331,12 @@
       replace:
       - test:
          - if: "self::m:msup"
-           then: [t: "1⠔"]
+           then: [T: "1⠔"]
          - else_if: "self::m:msub"
-           then: [t: "1⠢"]
+           then: [T: "1⠢"]
          - else_if: "self::m:munder"
-           then: [t: "1⠨⠢"]
-           else: [t: "1⠨⠔"]  # mover
+           then: [T: "1⠢"]
+           else: [T: "1⠔"]  # mover
       - test:
          # omit grouping indicators in the following cases
          if:   # FIX: need to add arbitrary shapes here (also for mroot) also multi-char leaf translations except mi
