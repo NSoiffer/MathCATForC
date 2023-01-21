@@ -14,7 +14,7 @@ Warning: the interface is subject to change. This is my first attempt to add a C
 To use this project:
 1. build the project (`cargo build --release`)
 2. this will create a release build in target/release and also create a directory `c-example` with `mathcat.h` and the MathCAT `Rules` dir in it.
-3. try compiling the the sample program `test.c` in that directory or create your own using that as an example. See some instructions for compiling in that file. 
+3. try compiling the the sample program `test.cpp` in that directory or create your own using that as an example. See some instructions for compiling in that file. 
 
 Alternatively, to avoid having to have a Rust build environment:
 download the a prebuilt dll from [releases](https://github.com/NSoiffer/MathCATForC/tags). The Release-_version_-_target_.zip file includes the dll, c-header file, a test/example program, and the Rules directory needed by MathCAT. It is probably best to use the latest release at that link. If you need a target/dll not listed there, file an issue.
