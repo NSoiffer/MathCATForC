@@ -48,7 +48,7 @@
           then: [{T: âm}]
           else: [{T: dương}]
   - test:
-      if: "*[2][self::m:mn]"
+      if: "*[2][self::m:mn or self::m:intent-literal]"
       then_test:
       - if: "*[2][text()='2']"
         then: {T: căn bậc hai}
@@ -302,9 +302,9 @@
   - x: "*[1]"
   - T: mũ
   - x: "*[2]"
-  - test:
-      if: "$ClearSpeak_Exponents != 'Ordinal'"
-      then: [{T: "lũy thừa"}]
+  #- test:
+      #if: "$ClearSpeak_Exponents != 'Ordinal'"
+      #then: [{T: "lũy thừa"}]
 
 - name: simple-var
   tag: power
@@ -314,9 +314,9 @@
   - T: mũ
   - x: "*[2]"
   #- pronounce: [{text: "-th"}, {ipa: "θ"}, {sapi5: "th"}, {eloquence: "T"}]
-  - test:
-      if: "$ClearSpeak_Exponents != 'Ordinal'"
-      then: [{T: "lũy thừa"}]
+  #- test:
+      #if: "$ClearSpeak_Exponents != 'Ordinal'"
+      #then: [{T: "lũy thừa"}]
 
 # match nested exponent, where the nested exponent is has the power 2 or 3 (n below)
 #   [xxx]^n, - [xxx]^n, [xxx] var^n, -[xxx] var^n
@@ -639,9 +639,9 @@
     - else_if: "$ClearSpeak_MultiLineLabel = 'Step'"
       then: [{T: "bước"}]
       # else 'None -- don't say anything'
-  - test:
-    - if: "count(*) > 1 and $ClearSpeak_MultiLineLabel != 'None'"
-      then: [{ct: "s"}] # plural
+  #- test:
+    #- if: "count(*) > 1 and $ClearSpeak_MultiLineLabel != 'None'"
+      #then: [{ct: "s"}] # plural
   - pause: short
   - x: "*"
 
@@ -726,7 +726,8 @@
 - name: no-say-parens
   tag: mrow
   match:
-  - "parent::*[not(self::m:msup) and not(self::m:msub) and not(self::m:msubsup) and not(self::m:power)] and "
+  - "parent::*[not(self::m:msup) and not(self::m:msub) and not(self::m:msubsup) and not(self::m:power) and"
+  - "          not(self::m:math) ] and "       # rule out [x] standing alone
   - "( IsBracketed(., '(', ')') or IsBracketed(., '[', ']') ) and "
   - "not( $ClearSpeak_Functions = 'None' and "
   - "     (preceding-sibling::*[1][text()='⁡'] or following-sibling::*[1][text()='⁡']) ) and "

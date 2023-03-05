@@ -155,7 +155,7 @@
   #- test:
   #    if: "$Verbosity!='Terse'"
   #    then:
-  #    - t: "the"
+  #    - T: "the"
   - T: "điểm"
   - x: "*[1]"
   - T: "phẩy"
@@ -270,11 +270,48 @@
 
 - name: default
   # handles single, double, etc., prime
-  tag: prime
-  match: "."
+  tag: [skip-super, say-super]
+  match: "count(*)=2"
   replace:
   - x: "*[1]"
+  - test:
+      if: "name(.)='say-super'"
+      then_test:
+        if: "$Verbosity='Terse'"
+        then: {T: chỉ số trên}
+        else: {T: chỉ số trên}
   - x: "*[2]"
+  - pause: short
+
+- name: msubsup-skip-super
+  # handles single, double, etc., prime
+  tag: [skip-super, say-super]
+  match: "count(*)=3"
+  replace:
+  - x: "*[1]"
+  - test:
+      if: "$Verbosity='Terse'"
+      then: {T: "chỉ số dưới"}
+      else: {T: "chỉ số dưới"}
+  - x: "*[2]"
+  - test:
+      if: "not(IsNode(*[2],'leaf'))"
+      then:
+      - test:
+          if: "$Verbosity='Terse'"
+          then: {T: "hết chỉ số dưới"}        # (en: "end sub")
+          else: {T: "hết chỉ số dưới"}              # (en: "end subscript")
+      - pause: short
+      else_test:
+          if: "*[2][self::m:mi]"   # need a pause in "x sub k prime" so the prime is not associated with the 'k'
+          then: [pause: short]
+  - test:
+      if: "name(.)='say-super'"
+      then_test:
+        if: "$Verbosity='Terse'"
+        then: {T: "chỉ số trên"}
+        else: {T: "chỉ số trên"}
+  - x: "*[3]"
   - pause: short
 
 - name: sin
@@ -290,17 +327,17 @@
   - bookmark: "@id"
   - test:
       if: "$Verbosity='Terse'"
-      then: {T: cos}
-      else: {T: cosin}
+      then: {T: cô sin}
+      else: {T: cô sin}
 - name: tan
   tag: mi
-  match: "text()='tan'"
+  match: "text()='tan' or text()='tg'"
   replace:
   - bookmark: "@id"
   - test:
       if: "$Verbosity='Terse'"
-      then: {T: tan}
-      else: {T: tangent}
+      then: {T: tang}
+      else: {T: tang}
 - name: sec
   tag: mi
   match: "text()='sec'"
@@ -317,8 +354,8 @@
   - bookmark: "@id"
   - test:
       if: "$Verbosity='Terse'"
-      then: {T: cos đảo}
-      else: {T: cos đảo}
+      then: {T: cô sin đảo}
+      else: {T: cô sin đảo}
 - name: cot
   tag: mi
   match: "text()='cot'"
@@ -326,8 +363,8 @@
   - bookmark: "@id"
   - test:
       if: "$Verbosity='Terse'"
-      then: {T: co-tan}
-      else: {T: co-tangent}
+      then: {T: cô tang}
+      else: {T: cô tang}
 
 - name: sinh
   tag: mi
@@ -495,7 +532,7 @@
       if: "self::m:determinant" # just need to check the first bracket since we know it must be (, [, or |
       then: {T: định thức}
       else: {T: ma trận}
-    #   - ot: the
+    #   - OT: the
   - T: "1 1"
   - T: có đầu vào là
   - x: "*[1]/*"

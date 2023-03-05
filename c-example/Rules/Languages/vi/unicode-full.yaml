@@ -90,6 +90,11 @@
  - "ª": [t: "chỉ số thứ tự nữ tính"]            	#  0xaa	(en: 'feminine ordinal indicator')
  - "¬": [t: "không phải"]                       	#  0xac	(en: 'not')
  - "«": [t: "dấu ý nghĩa góc cạnh trái"]        	#  0xab	(en: 'left-pointing double angle quote mark')
+ - "¯":                                            # 0xaf
+     - test:
+        if: "ancestor::m:modified-variable and preceding-sibling::*[1][self::m:mi]"
+        then: [t: "dòng"]                         # (en: 'bar') -- as in "x bar", a shorthand way to speak this
+        else: [t: "dòng"]                          # (en: 'line')
  - "°": [t: "độ"]                               	#  0xb0	(en: 'degrees')
  - "±": [t: "cộng hoặc trừ"]                    	#  0xb1	(en: 'plus or minus')
  - "²": [t: "hai"]                              	#  0xb2	(en: 'two')
@@ -492,17 +497,17 @@
     - spell: "translate('.', 'ℌℑℨℭ', 'HIZC')"
 
  - "ℍℙℾℿ":                                      	#  0x210d, 0x2119, 0x213e, 0x213f
-    - t: "cú đúp"                               	# 	(en: 'double struck')
+    - test: 
+         if: "$Verbosity!='Terse'"
+         then: [t: "cú đúp"]                               	# 	(en: 'double struck')
     - spell: "translate('.', 'ℍℙℾℿ', 'HPΓΠ')" 
 
  - "ℎ": [t: "planck hằng số"]                   	#  0x210e	(en: 'planck constant')
  - "ℏ":                                         	#  0x210f
      - test: 
-         if: "($Verbosity!='Terse')"
+         if: "($Verbosity='Terse')"
          then: [t: "h bar"]
-     - test: 
-         if: "($Verbosity!='Terse')"
-         then: [t: "giảm planck hằng số"]       	# 	(en: 'reduced planck constant')
+         else: [t: "giảm planck hằng số"]       	# 	(en: 'reduced planck constant')
 
  - "ℐℒ℘ℬℰℱℳ":                                   	#  0x2110, 0x2112, 0x2118, 0x2130, 0x2131, 0x2133
     - t: "script"
@@ -979,7 +984,7 @@
          if: "$Verbosity!='Terse'"
          then: [t: "là tương đương với"]        	# 	(en: 'is equiangular to')
  - "≛": [t: "ngôi sao bằng"]                    	#  0x225b	(en: 'star equals')
- - "≜": [t: "delta bằng"]                       	#  0x225c	(en: 'delta equals')
+ - "≜": [t: "đen ta bằng"]                       	#  0x225c	(en: 'delta equals')
  - "≝": [t: "được xác định là được"]            	#  0x225d	(en: 'is defined to be')
  - "≞":                                         	#  0x225e
      - test: 
@@ -1354,7 +1359,7 @@
          then: [t: "là"]                        	# 	(en: 'is')
      - t: "không phải là một nhóm con bình thường cũng không bằng"	# 	(en: 'not a normal subgroup of nor is equal to')
  - "⋭": [t: "không chứa như một nhóm con bình thường cũng như không bằng"]	#  0x22ed	(en: 'does not contain as a normal subgroup nor is equal to')
- - "⋮": [t: "ellipsis dọc"]                     	#  0x22ee	(en: 'vertical ellipsis')
+ - "⋮": [T: "chia hết cho"]                     	#  0x22ee	(en: 'vertical ellipsis')
  - "⋯": [t: "chấm chấm chấm"]                   	#  0x22ef	(en: 'dot dot dot')
  - "⋰": [t: "elip chéo lên trên"]               	#  0x22f0	(en: 'upwards diagonal ellipsis')
  - "⋱": [t: "dấu chấm lửng chéo"]               	#  0x22f1	(en: 'diagonal ellipsis')
@@ -2067,7 +2072,7 @@
  - "⨬": [t: "điểm trừ với dấu hiệu tăng"]       	#  0x2a2c	(en: 'minus sign with rising dots')
  - "⨭": [t: "cộng với dấu hiệu trong nửa vòng tròn trái"]	#  0x2a2d	(en: 'plus sign in left half circle')
  - "⨮": [t: "cộng với đăng nhập vào nửa vòng tròn bên phải"]	#  0x2a2e	(en: 'plus sign in right half circle')
- - "⨯": [t: "vector hoặc sản phẩm chéo"]        	#  0x2a2f	(en: 'vector or cross product')
+ - "⨯": [t: "sản phẩm chéo"]        	#  0x2a2f	(en: 'cross product')
  - "⨰": [t: "dấu hiệu nhân với dấu chấm ở trên"]	#  0x2a30	(en: 'multiplication sign with dot above')
  - "⨱": [t: "dấu hiệu nhân với inderbar"]       	#  0x2a31	(en: 'multiplication sign with underbar')
  - "⨲": [t: "sản phẩm bán kết với đóng đáy đóng"]	#  0x2a32	(en: 'semidirect product with bottom closed')
@@ -3130,8 +3135,8 @@
  - "": [t: "mở rộng ba vòng lặp tích phân"]    	#  0xee16	(en: 'expanding integral loop triple')
  - "": [t: "không có triệu chứng bằng giọng"]  	#  0xee17	(en: 'asymptotically equal to accent')
  - "": [t: "dấu hiệu bằng giọng"]              	#  0xee18	(en: 'equal sign accent')
- - "": [t: "quadruple prime"]                  	#  0xee19
- - "⁗": [t: "quadruple prime"]                  	#  0x2057
+ - "": [T: "đạo hàm cấp bốn"]                  	#  0xee19
+ - "⁗": [T: "đạo hàm cấp bốn"]                  	#  0x2057
  - "": [t: "tăng điểm số với vòng tròn mở bên trái"]	#  0xee1a	(en: 'bar accent with open circle left')
  - "": [t: "điểm nhấn thanh với vòng tròn kín trái"]	#  0xee1b	(en: 'bar accent with closed circle left')
  - "": [t: "tăng điểm số với vòng tròn mở phải"]	#  0xee1c	(en: 'bar accent with open circle right')
@@ -3206,24 +3211,36 @@
  # double struck (blackboard bold) chars in math alphabetic block and also MathType private use area
  # Some of these are reserved because they were used in Plane 0 -- that shouldn't be an issue other than causing the other chars to not display
  - "𝔸-𝕐":                                       	#  0x1d504 - 0x1d51d ('z' version is reserved)
-    - t: "cú đúp"                               	# 	(en: 'double struck')
+    - test: 
+         if: "$Verbosity!='Terse'"
+         then: [t: "cú đúp"]                               	# 	(en: 'double struck')
     - spell: "translate('.', '𝔸𝔹𝔺𝔻𝔼𝔽𝔾𝔿𝕀𝕁𝕂𝕃𝕄𝕅𝕆𝕇𝕈𝕉𝕊𝕋𝕌𝕍𝕎𝕏𝕐', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')"
 
  - "-":                                       	#  0xf080 - 0xf098
-    - t: "cú đúp"                               	# 	(en: 'double struck')
+    - test: 
+         if: "$Verbosity!='Terse'"
+         then: [t: "cú đúp"]                               	# 	(en: 'double struck')
     - spell: "translate('.', '', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')"
 
  - "𝕒-𝕫":                                       	#  0x1d552 - 0x1d56b
-    - t: "cú đúp"                               	# 	(en: 'double struck')
+    - test: 
+         if: "$Verbosity!='Terse'"
+         then: [t: "cú đúp"]                               	# 	(en: 'double struck')
     - spell: "translate('.', '𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫', 'abcdefghijklmnopqrstuvwxyz')"
  - "-":                                       	#  0xf09a - 0xf0b3
-    - t: "cú đúp"                               	# 	(en: 'double struck')
+    - test: 
+         if: "$Verbosity!='Terse'"
+         then: [t: "cú đúp"]                               	# 	(en: 'double struck')
     - spell: "translate('.', '', 'abcdefghijklmnopqrstuvwxyz')"
  - "𝟘-𝟡":                                       	#  0x1d7d8 - 0x1d7e1
-    - t: "cú đúp"                               	# 	(en: 'double struck')
+    - test: 
+         if: "$Verbosity!='Terse'"
+         then: [t: "cú đúp"]                               	# 	(en: 'double struck')
     - spell: "translate('.', '𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡', '0123456789')"
  - "-":                                       	#  0xf0c0 - 0xf0c9
-    - t: "cú đúp"                               	# 	(en: 'double struck')
+    - test: 
+         if: "$Verbosity!='Terse'"
+         then: [t: "cú đúp"]                               	# 	(en: 'double struck')
     - spell: "translate('.', '', '0123456789')"
 
  - "": [t: "double tấn công nabla"]            	#  0xf0ca	(en: 'double struck nabla')
@@ -3303,11 +3320,15 @@
 
  # MathType only has a few of the cap Greek letters in PUA
  - "":                                 	#  0xf201 - 0xf209
-    - t: "cú đúp"                               	# 	(en: 'double struck')
+    - test: 
+         if: "$Verbosity!='Terse'"
+         then: [t: "cú đúp"]                               	# 	(en: 'double struck')
     - spell: "translate('.', '', 'ΔΨΛΠΣΘΓΩΥ')"
 
  - "-":                                       	#  0xf220 - 0xf236
-    - t: "cú đúp"                               	# 	(en: 'double struck')
+    - test: 
+         if: "$Verbosity!='Terse'"
+         then: [t: "cú đúp"]                               	# 	(en: 'double struck')
     - spell: "translate('.', '', 'ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡ΢ΣΤΥΦΧΨΩ')"
 
  - "": [t: "double tấn công sigma cuối cùng"]  	#  0xf237	(en: 'double struck final sigma')
@@ -3385,18 +3406,18 @@
     - t: "dũng cảm"                             	# 	(en: 'bold')
     - spell: "translate('.', '', 'abcdefghijklmnopqrstuvwxyz')"
  - "𝘈-𝘡":                                       	#  0x1d608 - 0x1d621
-    - t: "chữ in nghiêng"                       	# 	(en: 'italic')
+    # - t: "chữ in nghiêng"                       	# 	(en: 'italic')
     - spell: "translate('.', '𝘈𝘉𝘊𝘋𝘌𝘍𝘎𝘏𝘐𝘑𝘒𝘓𝘔𝘕𝘖𝘗𝘘𝘙𝘚𝘛𝘜𝘝𝘞𝘟𝘠𝘡', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')"
  - "-":                                       	#  0xf368 - 0xf381
-    - t: "chữ in nghiêng"                       	# 	(en: 'italic')
+    # - t: "chữ in nghiêng"                       	# 	(en: 'italic')
     - spell: "translate('.', '', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')"
 
  - "𝘢-𝘻":                                       	#  0x1d622 - 0x1d63b
-    - t: "chữ in nghiêng"                       	# 	(en: 'italic')
+    # - t: "chữ in nghiêng"                       	# 	(en: 'italic')
     - spell: "translate('.', '𝘢𝘣𝘤𝘥𝘦𝘧𝘨𝘩𝘪𝘫𝘬𝘭𝘮𝘯𝘰𝘱𝘲𝘳𝘴𝘵𝘶𝘷𝘸𝘹𝘺𝘻', 'abcdefghijklmnopqrstuvwxyz')"
 
  - "-":                                       	#  0xf382 - 0xf39b
-    - t: "chữ in nghiêng"                       	# 	(en: 'italic')
+    # - t: "chữ in nghiêng"                       	# 	(en: 'italic')
     - spell: "translate('.', '', 'abcdefghijklmnopqrstuvwxyz')"
 
  - "𝘼-𝙕":                                       	#  0x1d63c - 0x1d655
@@ -3459,30 +3480,30 @@
     - spell: "translate('.', '', '∂εθκφρπ')"
 
  - "𝛢-𝛺":                                       	#  0x1d6e2 - 0x1d6fa
-    - t: "chữ in nghiêng"                       	# 	(en: 'italic')
+    # - t: "chữ in nghiêng"                       	# 	(en: 'italic')
     - spell: "translate('.', '𝛢𝛣𝛤𝛥𝛦𝛧𝛨𝛩𝛪𝛫𝛬𝛭𝛮𝛯𝛰𝛱𝛲𝛳𝛴𝛵𝛶𝛷𝛸𝛹𝛺', 'ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡ΢ΣΤΥΦΧΨΩ')"
 
  - "-":                                       	#  0xf442 - 0xf45a
-    - t: "chữ in nghiêng"                       	# 	(en: 'italic')
+    # - t: "chữ in nghiêng"                       	# 	(en: 'italic')
     - spell: "translate('.', '', 'ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡ΢ΣΤΥΦΧΨΩ')"
 
  - "𝛼-𝜔":                                       	#  0x1d6fc - 0x1d714
-    - t: "chữ in nghiêng"                       	# 	(en: 'italic')
+    # - t: "chữ in nghiêng"                       	# 	(en: 'italic')
     - spell: "translate('.', '𝛼𝛽𝛾𝛿𝜀𝜁𝜂𝜃𝜄𝜅𝜆𝜇𝜈𝜉𝜊𝜋𝜌𝜍𝜎𝜏𝜐𝜑𝜒𝜓𝜔', 'αβγδεζηθικλμνξοπρςστυφχψω')"
 
  - "-":                                       	#  0xf45c - 0xf474
-    - t: "chữ in nghiêng"                       	# 	(en: 'italic')
+    # - t: "chữ in nghiêng"                       	# 	(en: 'italic')
     - spell: "translate('.', '', 'αβγδεζηθικλμνξοπρςστυφχψω')"
 
  - "": [t: "nabla in nghiêng"]                 	#  0xf45b	(en: 'italic nabla')
  - "𝛻": [t: "nabla in nghiêng"]                 	#  0x1d6fb	(en: 'italic nabla')
 
  - "𝜕𝜖𝜗𝜘𝜙𝜚𝜛":                                   	#  0x1d715 - 0x1d71b
-    - t: "chữ in nghiêng"                       	# 	(en: 'italic')
+    # - t: "chữ in nghiêng"                       	# 	(en: 'italic')
     - spell: "translate('.', '𝜕𝜖𝜗𝜘𝜙𝜚𝜛', '∂εθκφρπ')"
 
  - "":                                   	#  0xf475  - 0xf47b
-    - t: "chữ in nghiêng"                       	# 	(en: 'italic')
+    # - t: "chữ in nghiêng"                       	# 	(en: 'italic')
     - spell: "translate('.', '', '∂εθκφρπ')"
 
  - "𝜜-𝜴":                                       	#  0x1d71c - 0x1d734
@@ -3510,7 +3531,7 @@
     - spell: "translate('.', '', '∂εθκφρπ')"
 
  - "𝜵": [t: "nabla italic in đậm"]              	#  0x1d735	(en: 'bold italic nabla')
- - "": [t: "in nghiêng alpha"]                 	#  0xf496	(en: 'bold italic alpha')
+ - "": [t: "nabla italic in đậm"]                 	#  0xf495	(en: 'bold italic nabla')
 
  - "𝝖-𝝮":                                       	#  0x1d756 - 0x1d76e
     - t: "dũng cảm"                             	# 	(en: 'bold')

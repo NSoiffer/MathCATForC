@@ -1,28 +1,16 @@
 ---
+ - "a-z": [T: "."]
 
-#  - "a": 
-#     - test: 
-#         if: "$TTS='none'"
-#         then: [T: "a"]                         # long "a" sound in all speech engines I tested (espeak, MS SAPI, eloquence,
-#         else: [SPELL: "a"]                         #    AWS Polly, ReadSpeaker, NaturalReader, google cloud, nuance, ibm watson)
- - "a-z": 
+ - "A-Z":
+    - x: "translate('.', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"
     - test: 
-        if: "$TTS='none'"
-        then: [T: "."]                          
-        else: [spell: "'.'"]                       
-
-#  - "A":
-#     - test: 
-#         if: "$TTS='none'"
-#         then: [x: "$SpeechOverrides_CapitalLetters", t: "A"]                         # long "a" sound in all speech engines I tested (see above)
-#         else: [SPELL: "A"]
-
- - "A-Z": 
-    - test: 
-        if: "$TTS='none'"
-        # note: processing of ranges converts '.' into the character, so it needs to be in quotes below
-        then: [x: "$SpeechOverrides_CapitalLetters", x: "translate('.', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"]                         
-        else: {SPELL: "'.'"}                       
+        if: "$CapitalLetters_UseWord"
+        then_test:
+          if: "$SpeechOverrides_CapitalLetters = ''"
+          then_test:
+            if: "$Impairment = 'Blindness' and $Verbosity='Verbose'"
+            then: [t: "hoa"]
+          else: [x: "$SpeechOverrides_CapitalLetters"] 
 
  - "0-9": [T: "."]
 
@@ -148,193 +136,57 @@
  - "̅": [T: thanh ngang]               # 0x305
  - "̆": [T: mũ ngược]                 # 0x306
  - "̇": [T: dot above embellishment]             # 0x307
- - "Α":                                          # 0x391
-     - T: an-pha
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: an-pha
- - "Β":                                          # 0x392
-     - T: bê-ta
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: bê-ta
- - "Γ":                                          # 0x393
-     - T: gamma
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: gamma
 
-    # Note: ClearSpeak has pref TriangleSymbol for this character, but that is wrong
- - "Δ":                                          # 0x394
-     - T: delta
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: delta
- - "Ε":                                          # 0x395
-     - T: epsilon
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: epsilon
- - "Ζ":                                          # 0x396
-     - T: zeta
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: zeta
- - "Η":                                          # 0x397
-     - T: eta
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: eta
- - "Θ":                                          # 0x398
-     - T: theta
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-    # - T: theta
- - "Ι":                                          # 0x399
-     - T: iota
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: iota
- - "Κ":                                          # 0x39a
-     - T: kappa
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: kappa
- - "Λ":                                          # 0x39b
-     - T: lambda
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-    # - T: lamda
- - "Μ":                                          # 0x39c
-     - T: mu
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-    # - T: mu
- - "Ν":                                          # 0x39d
-     - T: nu
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-    # - T: nu
- - "Ξ":                                          # 0x39e
-     - T: xi
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: xi
- - "Ο":                                          # 0x39f
-     - T: omicron
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: omicron
- - "Π":                                          # 0x3a0
-     - T: pi
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: pi
- - "Ρ":                                          # 0x3a1
-     - T: rho
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: rho
- - "Σ":                                          # 0x3a3
-     - T: sigma
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-    # - T: sigma
- - "Τ":                                          # 0x3a4
-     - T: tau
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: tau
- - "Υ":                                          # 0x3a5
-     - T: upsilon
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: upsilon
- - "Φ":                                          # 0x3a6
-     - T: phi
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-    # - T: phi
- - "Χ":                                          # 0x3a7
-     - T: chi
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-    # - T: chi
- - "Ψ":                                          # 0x3a8
-     - T: psi
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-    # - T: psi
- - "Ω":                                          # 0x3a9
-     - T: omega
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: omega
- - "Ϊ":                                          # 0x3aa
-     - T: iota với hai dấu chấm ở trên
-     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: iota with dialytika
- - "Ϋ":                                          # 0x3ab
-    - T: upsilon với hai chấm ở trên
+    # Note: ClearSpeak has pref TriangleSymbol for "Δ", but that is wrong
+ - "Α-Ω": 
     - test: 
-         if: "($Blind or $Verbosity!='Terse')"
-         then: [T: "hoa"]
-     #- T: upsilon with dialytika
- - "α": [T: alpha]                               # 0x3b1
- - "β": [T: beta]                                # 0x3b2
- - "γ": [T: gamma]                               # 0x3b3
- - "δ": [T: delta]                               # 0x3b4
- - "ε": [T: epsilon]                             # 0x3b5
- - "ζ": [T: zeta]                                # 0x3b6
- - "η": [T: eta]                                 # 0x3b7
- - "θ": [T: theta]                               # 0x3b8
- - "ι": [T: iota]                                # 0x3b9
- - "κ": [T: kappa]                               # 0x3ba
- - "λ": [T: lambda]                               # 0x3bb
+        if: "$CapitalLetters_Beep"
+        then:
+        - audio:
+            value: "beep.mp4"
+            replace: []
+    - pitch:
+        value: "$CapitalLetters_Pitch"
+        # note: processing of ranges converts '.' into the character, so it needs to be in quotes below
+        replace: [spell: "translate('.', 'ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡ΢ΣΤΥΦΧΨΩ', 'αβγδεζηθικλμνξοπρςστυφχψω')"]
+    - test: 
+        if: "$CapitalLetters_UseWord"
+        then_test:
+          if: "$SpeechOverrides_CapitalLetters = ''"
+          then_test:
+            if: "$Impairment = 'Blindness'"
+            then: [t: "hoa"]
+          else: [x: "$SpeechOverrides_CapitalLetters"] 
+
+ - "α": [T: an pha]                               # 0x3b1
+ - "β": [T: bê ta]                                # 0x3b2
+ - "γ": [T: gam ma]                               # 0x3b3
+ - "δ": [T: đen ta]                               # 0x3b4
+ - "ε": [T: ép xi lon]                             # 0x3b5
+ - "ζ": [T: dê ta]                                # 0x3b6
+ - "η": [T: ê ta]                                 # 0x3b7
+ - "θ": [T: thê ta]                               # 0x3b8
+ - "ι": [T: i ô ta]                                # 0x3b9
+ - "κ": [T: ca ba]                               # 0x3ba
+ - "λ": [T: lam đa]                               # 0x3bb
  - "μ": [T: mu]                                  # 0x3bc
  - "ν": [T: nu]                                  # 0x3bd
- - "ξ": [T: zai]                                 # 0x3be
- - "ο": [T: omicron]                             # 0x3bf
- - "π": [T: pi]                                  # 0x3c0
- - "ρ": [T: rho]                                 # 0x3c1
- - "ς": [T: final sigma]                         # 0x3c2
- - "σ": [T: sigma]                               # 0x3c3
+ - "ξ": [T: giai]                                 # 0x3be
+ - "ο": [T: o mi ron]                             # 0x3bf
+ - "π": [T: bi]                                  # 0x3c0
+ - "ρ": [T: rô]                                 # 0x3c1
+ - "ς": [T: xích ma cuối]                         # 0x3c2
+ - "σ": [T: xích ma]                               # 0x3c3
  - "τ": [T: tau]                                 # 0x3c4
- - "υ": [T: upsilon]                             # 0x3c5
+ - "υ": [T: ấp xi lon]                             # 0x3c5
  - "φ": [T: phi]                                 # 0x3c6
- - "χ": [T: chi]                                 # 0x3c7
+ - "χ": [T: cai]                                 # 0x3c7
  - "ψ": [T: psi]                                 # 0x3c8
- - "ω": [T: omega]                               # 0x3c9
+ - "ω": [T: ô mê ga]                               # 0x3c9
  - "ϕ": [T: phi]                                 # 0x3d5
- - "ϖ": [T: pi]                                  # 0x3d6
- - "ϵ": [T: epsilon]                             # 0x3f5
- - "϶": [T: epsilon đảo ngược]                    # 0x3f6
+ - "ϖ": [T: bi]                                  # 0x3d6
+ - "ϵ": [T: ép xi lon]                             # 0x3f5
+ - "϶": [T: ép xi lon đảo ngược]                    # 0x3f6
  - "А":                                          # 0x410
      - T: a
      - test: 
@@ -365,12 +217,12 @@
  - "⁢": [T: ""]                                   # 0x2062
  - "⁣": [T: ""]                                   # 0x2063
  - "⁤": [T: "và"]                                # 0x2064
- - "′": [T: nháy đơn]                               # 0x2032
- - "″": [T: nháy kép]                        # 0x2033
- - "‴": [T: ba dấu nháy]                        # 0x2034
- - "‵": [T: nháy đơn ngược]                      # 0x2035
- - "‶": [T: nháy kép ngược]               # 0x2036
- - "‷": [T: ba dấu nháy ngược]               # 0x2037
+ - "′": [T: đạo hàm]                               # 0x2032
+ - "″": [T: đạo hàm cấp hai]                        # 0x2033
+ - "‴": [T: đạo hàm cấp ba]                        # 0x2034
+ - "‵": [T: nguyên hàm]                      # 0x2035
+ - "‶": [T: nguyên hàm cấp hai]               # 0x2036
+ - "‷": [T: nguyên hàm cấp ba]               # 0x2037
  - "ℂ":                                          # 0x2102
      - T: C 
      - test: 
@@ -486,7 +338,7 @@
     # rule is identical to 0x2208
      - test:
         if: "$SpeechStyle != 'ClearSpeak'"
-        then: [T: không là phần tử của]
+        then: [T: không là phần tử thuộc]
         # Several options for speaking elements in ClearSpeak -- they split between being inside a set or not and then the option
         else_test:
             if: "../../self::m:set or ../../../self::m:set" # inside a set
@@ -494,15 +346,15 @@
               - if: $ClearSpeak_SetMemberSymbol = 'Auto' or $ClearSpeak_SetMemberSymbol = 'In'
                 then: [T: không thuộc]
               - else_if: $ClearSpeak_SetMemberSymbol = 'Member'
-                then: [T: không là phần tử]
+                then: [T: không là phần tử thuộc]
               - else_if: $ClearSpeak_SetMemberSymbol = 'Element'
-                then: [T: không là phần tử]
+                then: [T: không là phần tử thuộc]
               - else: [T: không thuộc về]             # $ClearSpeak_SetMemberSymbol = 'Belongs'
             else_test:
               - if: $ClearSpeak_SetMemberSymbol = 'Auto' or $ClearSpeak_SetMemberSymbol = 'Member'
-                then: [T: không là phần tử]
+                then: [T: không là phần tử thuộc]
               - else_if: $ClearSpeak_SetMemberSymbol = 'Element'
-                then: [T: không là phần tử]
+                then: [T: không là phần tử thuộc]
               - else_if: $ClearSpeak_SetMemberSymbol = 'In'
                 then: [T: không thuộc]
               - else: [T: không thuộc về]              # $ClearSpeak_SetMemberSymbol = 'Belongs'

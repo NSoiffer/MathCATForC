@@ -55,7 +55,7 @@
 - name: simple-sub
   tag: particular-value-of
   # invisible comma -- want "x sub 1 1" without "end sub"
-  match: "IsNode(*[2], 'simple') or *[2][self::m:mrow][*[2][text()='⁣']]"
+  match: "IsNode(*[2], 'leaf') or *[2][self::m:mrow][*[2][text()='⁣']]"
   replace:
   - x: "*[1]"
   - test:
@@ -88,7 +88,7 @@
   match: "."
   replace:
   - test:
-      if: "not(IsNode(*[1], 'simple'))"
+      if: "not(IsNode(*[1], 'leaf'))"
       then: [{t: "modified"}]
   - x: "*[1]"
   - t: "with"
@@ -100,7 +100,7 @@
   match: "."
   replace:
   - test:
-      if: "not(IsNode(*[1], 'simple'))"
+      if: "not(IsNode(*[1], 'leaf'))"
       then: [{t: "modified"}]
   - x: "*[1]"
   - t: "with"
@@ -112,7 +112,7 @@
   match: "."
   replace:
   - test:
-      if: "not(IsNode(*[1], 'simple'))"
+      if: "not(IsNode(*[1], 'leaf'))"
       then: [{t: "modified"}]
   - x: "*[1]"
   - t: "with"
@@ -414,7 +414,10 @@
       if: ".[contains(@notation,'radical')]"
       then: [{t: square root}, {pause: short}]
   - t: enclosing
-  - x: "*"
+  - test:
+      if: "*[self::m:mtext and text()=' ']"
+      then: [t: "some space"]     # otherwise there is complete silence
+      else: [x: "*"]
   - test:
       if: "$Impairment = 'Blindness' and ( $SpeechStyle != 'SimpleSpeak' or not(IsNode(*[1], 'leaf')) )"
       then: [{t: end enclosure}]
@@ -432,12 +435,26 @@
   replace:
   - x: "*[1]"
 
+- name: intent-literal-silent
+  tag: "intent-literal"
+  match: "@data-intent-hint='silent'"
+  # say nothing
+  replace: []
+
+# handling of negative numbers is hard -- we do something that is close to right here
+- name: intent-literal-negative-number
+  tag: "intent-literal"
+  match: "starts-with(text(), '-')"
+  replace:
+  - t: "minus"
+  - x: "translate(text(), '-_.', ' ')"   # more accurate to translate "-" to nothing, but turning it into a space should be ok
+
 - name: intent-literal
   # unknown leaf -- just speak the text -- could be a literal intent
   tag: "intent-literal"
   match: "."
   replace:
-  - x: "translate(text(), '-_.', ' ')"
+  - x: "translate(text(), '-_.', '  ')"
 
 # Here are the intent hints that need to be handled: 'prefix' | 'infix' | 'postfix' | 'function' | 'silent'
 - name: silent-intent
@@ -452,7 +469,7 @@
   tag: "*"
   match: "@data-intent-hint='prefix' and count(*)>0"
   replace:
-  - x: "translate(name(.), '-', ' ')"
+  - x: "translate(name(.), '-_', '  ')"
   - x: "*"
   - pause: short
 
@@ -463,7 +480,7 @@
   replace:
   - pause: short
   - x: "*"
-  - x: "translate(name(.), '-', ' ')"
+  - x: "translate(name(.), '-_', '  ')"
 
 
 - name: infix-intent
@@ -474,7 +491,7 @@
   - pause: short
   - insert:
       nodes: "*"
-      replace: [x: "translate(name(.), '-', ' ')", pause: auto]
+      replace: [x: "translate(name(.), '-_', '  ')", pause: auto]
   - pause: short
 
 
@@ -483,7 +500,7 @@
   tag: "*"
   match: count(*)>0
   replace:
-  - x: "translate(name(.), '-', ' ')"
+  - x: "translate(name(.), '-_', '  ')"
   - t: "of"
   - pause: short
   - insert:
@@ -495,4 +512,4 @@
   tag: "*"
   match: "."
   replace:
-  - x: "translate(name(), '-', ' ')"
+  - x: "translate(name(), '-_', ' ')"

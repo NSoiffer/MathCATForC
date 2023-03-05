@@ -28,6 +28,10 @@ const char *SetMathML(const char *mathml_str);
 
 /// Get the spoken text of the MathML that was set.
 /// The speech takes into account any AT or user preferences.
+const char *GetMathCATVersion();
+
+/// Get the spoken text of the MathML that was set.
+/// The speech takes into account any AT or user preferences.
 const char *GetSpokenText();
 
 /// Set an API preference. The preference name should be a known preference name.

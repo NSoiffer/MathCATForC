@@ -40,6 +40,7 @@ bool singleTest(const char* mathml, bool doPrint) {
 
     SetMathCatPreference("Language", "en");
     SetMathCatPreference("SpeechStyle", "SimpleSpeak");
+    SetMathCatPreference("TTS", "None");
 
     
     const char* speech = GetSpokenText();
@@ -83,7 +84,10 @@ int main(int argc, char *argv[]) {
       <mo>(</mo><mfrac linethickness='0'><mi>m</mi><mi>n</mi></mfrac><mo>)</mo>\n\
       <mo>(</mo><msqrt><msup><mi>m</mi><mn>2</mn></msup><mo>+</mo><mi>n</mi></msqrt><mo>)</mo>\n\
     </math>";
-    printf("Testing with mathml:\n%s\n", mathml);
+
+    const char* version = GetMathCATVersion();
+    printf("Testing MathCAT version %s with mathml:\n%s\n", version, mathml);
+    FreeMathCATString((char*)version);
 
     const char* rulesDirResult = SetRulesDir("./Rules");
     if (rulesDirResult == "") { // empty strings are signs of an error

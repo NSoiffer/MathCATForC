@@ -107,7 +107,7 @@
 
 - name: binomial
   tag: binomial
-  match: "."
+  match: "not(@data-intent-hint)"
   replace:
   - x: "*[1]"
   - t: choose
@@ -115,7 +115,7 @@
 
 - name: permutation
   tag: permutation-symbol
-  match: "."
+  match: "not(@data-intent-hint)"
   replace:
   - x: "*[2]"
   - t: permutations of
@@ -123,7 +123,7 @@
 
 - name: intervals
   tag: [open-interval, open-closed-interval, closed-interval, closed-open-interval]
-  match: "."
+  match: "not(@data-intent-hint)"
   replace:
   - test:
       if: "$Verbosity!='Terse'"
@@ -144,7 +144,7 @@
 
 - name: default-point
   tag: point
-  match: "."
+  match: "not(@data-intent-hint)"
   replace:
   - test:
       if: "$Verbosity!='Terse'"
@@ -157,7 +157,7 @@
 
 - name: absolute-value
   tag: absolute-value
-  match: "."
+  match: "not(@data-intent-hint)"
   replace:
   - test:
       if: "$Verbosity='Terse'"
@@ -171,7 +171,7 @@
 
 - name: negative
   tag: negative
-  match: "."
+  match: "not(@data-intent-hint)"
   replace:
   - bookmark: "./@id"
   - t: "negative"
@@ -179,7 +179,7 @@
 
 - name: positive
   tag: positive
-  match: "."
+  match: "not(@data-intent-hint)"
   replace:
   - bookmark: "./@id"
   - t: "positive"
@@ -187,7 +187,7 @@
 
 - name: subscript
   tag: sub
-  match: "."
+  match: "not(@data-intent-hint)"
   replace:
   - x: "*[1]"
   - t: "sub"
@@ -211,7 +211,7 @@
 
 - name: bigop-under
   tag: large-op
-  match: "."
+  match: "not(@data-intent-hint)"
   replace:
   - test:
       if: "$Verbosity!='Terse'"
@@ -236,7 +236,7 @@
 
 - name: limit
   tag: limit
-  match: "."
+  match: "not(@data-intent-hint)"
   replace:
   - test:
       if: "$Verbosity!='Terse'"
@@ -255,7 +255,7 @@
 - name: default
 
   tag: modified-variable
-  match: "."
+  match: "not(@data-intent-hint)"
   replace:
   - x: "*[1]"
   - x: "*[2]"
@@ -263,11 +263,48 @@
 
 - name: default
   # handles single, double, etc., prime
-  tag: prime
-  match: "."
+  tag: [skip-super, say-super]
+  match: "count(*)=2"
   replace:
   - x: "*[1]"
+  - test:
+      if: "name(.)='say-super'"
+      then_test:
+        if: "$Verbosity='Terse'"
+        then: {t: super}
+        else: {t: superscript}
   - x: "*[2]"
+  - pause: short
+
+- name: msubsup-skip-super
+  # handles single, double, etc., prime
+  tag: [skip-super, say-super]
+  match: "count(*)=3"
+  replace:
+  - x: "*[1]"
+  - test:
+      if: "$Verbosity='Verbose'"
+      then: {t: "subscript"}
+      else: {t: "sub"}
+  - x: "*[2]"
+  - test:
+      if: "not(IsNode(*[2],'leaf'))"
+      then:
+      - test:
+          if: "$Verbosity='Verbose'"
+          then: {t: "end subscript"}
+          else: {t: "end sub"}
+      - pause: short
+      else_test:
+          if: "*[2][self::m:mi]"   # need a pause in "x sub k prime" so the prime is not associated with the 'k'
+          then: [pause: short]
+  - test:
+      if: "name(.)='say-super'"
+      then_test:
+        if: "$Verbosity='Verbose'"
+        then: {t: "superscript"}
+        else: {t: "super"}
+  - x: "*[3]"
   - pause: short
 
 - name: sin
@@ -287,7 +324,7 @@
       else: {t: cosine}
 - name: tan
   tag: mi
-  match: "text()='tan'"
+  match: "text()='tan' or text()='tg'"
   replace:
   - bookmark: "@id"
   - test:
@@ -411,7 +448,7 @@
 
 - name: log-base
   tag: log-base
-  match: "."
+  match: "not(@data-intent-hint)"
   replace:
   - bookmark: "@id"
   - test:
@@ -626,7 +663,7 @@
 - name: default-matrix
   tag: [matrix, determinant]
   variables: [{IsColumnSilent: "$SpeechStyle = 'ClearSpeak' and $ClearSpeak_Matrix = 'SilentColNum'"}]
-  match: "."
+  match: "not(@data-intent-hint)"
   replace:
   - t: the
   - x: "count(*)"

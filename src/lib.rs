@@ -140,6 +140,13 @@ pub extern "C" fn SetMathML(mathml_str: *const c_char) -> *const c_char {
 #[no_mangle]
 /// Get the spoken text of the MathML that was set.
 /// The speech takes into account any AT or user preferences.
+pub extern "C" fn GetMathCATVersion() -> *const c_char {    
+    return set_string_error( Ok(get_version()) );
+}
+
+#[no_mangle]
+/// Get the spoken text of the MathML that was set.
+/// The speech takes into account any AT or user preferences.
 pub extern "C" fn GetSpokenText() -> *const c_char {
     return set_string_error( get_spoken_text() );
 }

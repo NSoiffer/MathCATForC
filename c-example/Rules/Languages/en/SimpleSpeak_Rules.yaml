@@ -26,7 +26,7 @@
       if: "$Verbosity!='Terse'"
       then: [{t: the}]
   - test:
-      if: "*[2][self::m:mn]"
+      if: "*[2][self::m:mn or self::m:intent-literal]"
       then_test:
       - if: "*[2][text()='2']"
         then: [{t: square root}]
@@ -243,7 +243,6 @@
       - x: "*[1]"
 
 - name: times
-
   tag: mo
   match:
   # say "times" when invisible times is followed by parens or a superscript that has a base with parens or "|"s
@@ -266,7 +265,8 @@
 - name: no-say-parens
   tag: mrow
   match:
-  - "parent::*[not(self::m:msup) and not(self::m:msub) and not(self::m:msubsup) and not(self::m:power)] and "
+  - "parent::*[not(self::m:msup) and not(self::m:msub) and not(self::m:msubsup) and not(self::m:power) and"
+  - "          not(self::m:math) ] and "       # rule out [x] standing alone
   - "( IsBracketed(., '(', ')') or IsBracketed(., '[', ']') ) and "
   - "( IsNode(*[2], 'simple')  )"
   # missing clause: 'a positive fraction that is spoken as an ordinal

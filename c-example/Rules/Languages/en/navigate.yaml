@@ -35,7 +35,7 @@
 
 
 # Rules for speaking what happens when moving into or out of a notation
-- name: into
+- name: into-or-out-of
   tag: mfrac
   match: "$Move2D != ''"
   replace:
@@ -46,7 +46,7 @@
       else: [{t: "denominator"}]
   - pause: "medium"
 
-- name: into
+- name: into-or-out-of
   tag: msqrt
   match: "$Move2D != ''"
   replace:
@@ -54,7 +54,7 @@
   - t: "square root"
   - pause: "medium"
 
-- name: into
+- name: into-or-out-of
   tag: mroot
   match: "$Move2D != ''"
   replace:
@@ -65,7 +65,7 @@
       else: [{t: "root index"}]
   - pause: "medium"
 
-- name: into
+- name: into-or-out-of
   tag: msub
   match: "$Move2D != ''"
   replace:
@@ -76,7 +76,7 @@
       else: [{t: "subscript"}]
   - pause: "medium"
 
-- name: into
+- name: into-or-out-of
   tag: msup
   match: "$Move2D != ''"
   replace:
@@ -87,7 +87,7 @@
       else: [{t: "superscript"}] # FIX: it would be better to use the word used when reading (power, exponent, ...)
   - pause: "medium"
 
-- name: into
+- name: into-or-out-of
   tag: msubsup
   match: "$Move2D != ''"
   replace:
@@ -100,7 +100,7 @@
       else: [{t: "superscript"}] # FIX: it would be better to use the word used when reading (power, exponent, ...)
   - pause: "medium"
 
-- name: into
+- name: into-or-out-of
   tag: munder
   match: "$Move2D != ''"
   replace:
@@ -111,7 +111,7 @@
       else: [{t: "lower limit"}]
   - pause: "medium"
 
-- name: into
+- name: into-or-out-of
   tag: mover
   match: "$Move2D != ''"
   replace:
@@ -122,7 +122,7 @@
       else: [{t: "upper limit"}]
   - pause: "medium"
 
-- name: into
+- name: into-or-out-of
   tag: munderover
   match: "$Move2D != ''"
   replace:
@@ -135,7 +135,7 @@
       else: [{t: "upper limit "}]
   - pause: "medium"
 
-- name: into
+- name: into-or-out-of
   tag: mmultiscripts
   match: "$Move2D != ''"
   replace:
@@ -156,7 +156,7 @@
           else: [{t: "superscript"}]
   - pause: "medium"
 
-- name: into
+- name: into-or-out-of
   tag: mtd
   match: "$Move2D = 'into'"
   replace:
@@ -165,7 +165,7 @@
   - x: "count($Child2D/preceding-sibling::*)+1"
   - pause: "medium"
 
-- name: into
+- name: into-or-out-of
   tag: [mtr, mlabeledtr]
   match: "$Move2D = 'into'"
   replace:
@@ -505,8 +505,6 @@
 
 # ********* MoveStart/End  ***************
 - name: math-move-to-start-or-end
-
-
   tag: math
   match: "$NavCommand = 'MoveStart' or $NavCommand = 'MoveLineStart' or $NavCommand = 'MoveEnd' or $NavCommand = 'MoveLineEnd'"
   replace:
@@ -514,7 +512,7 @@
       variables: [{MatchCounter: "$MatchCounter + 1"}]
       replace:
       - test:
-          if: "$MatchCounter = 0 and $NavVerbosity = 'Verbose'"
+          if: "$NavVerbosity = 'Verbose'"
           then:
           - test:
             - if: "$NavCommand = 'MoveStart'"
@@ -528,27 +526,47 @@
       - test:
           if: "$NavCommand = 'MoveStart' or $NavCommand = 'MoveLineStart'"
           then:
-          - set_variables: [{NavCommand: "'MoveNextZoom'"}]
-          - x: "*[1]"
+          # move inside of the mrow inside of 'math' or inside the fraction, etc  (hence two levels down)
+          - with:
+              variables: [{NavCommand: "'MoveNextZoom'"}]
+              replace: [x: "*[1]/*[1]"]
           else:
-          - set_variables: [{NavCommand: "'MovePreviousZoom'"}]
-          - x: "*[last()]"
+          - with:
+              variables: [{NavCommand: "'MovePreviousZoom'"}]
+              replace: [x: "*[last()]/*[last()]"]
 
+# We stop when the parent is 2d (e.g., frac), but not if in leaf base of msub/msup/msubsup because that's really on the same line
 - name: move-to-start-or-end-2d
   tag: "*"
-  match: "($NavCommand = 'MoveLineStart' or $NavCommand = 'MoveLineEnd') and IsNode(.., '2D')"
+  match:
+  - "($NavCommand = 'MoveLineStart' or $NavCommand = 'MoveLineEnd') and IsNode(.., '2D') and"
+  - "not( IsNode(., 'leaf') and(parent::m:msub or parent::m:msup or parent::m:msubsup) )"
   replace:
+  - test:
+      if: "$NavVerbosity = 'Verbose'"
+      then:
+      - test:
+          if: "$NavCommand = 'MoveLineStart'"
+          then: [{t: "move to start of line"}]
+          else: [{t: "move to end of line"}] # "$NavCommand = 'MoveLineEnd'"
+      - pause: "medium"
   - test:
       if: "self::m:mrow"
       then_test:
         if: "$NavCommand = 'MoveLineStart'"
-        then: [{set_variables: [{NavNode: "*[1]/@id"}]}]
-        else: [{set_variables: [{NavNode: "*[last()]/@id"}]}]
+        then:
+        - with:
+            variables: [{NavCommand: "'MoveNextZoom'"}]
+            replace: [x: "*[1]"]
+        else:
+        - with:
+            variables: [{NavCommand: "'MovePreviousZoom'"}]
+            replace: [x: "*[last()]"]
       else: [{set_variables: [{NavNode: "@id"}]}]
 
 - name: move-to-start-or-end-default
   tag: "*"
-  match: "$NavCommand = 'MoveStart' or $NavCommand = 'MoveLineStart' or $NavCommand = 'MoveEnd'   or $NavCommand = 'MoveLineEnd'"
+  match: "$NavCommand = 'MoveStart' or $NavCommand = 'MoveLineStart' or $NavCommand = 'MoveEnd' or $NavCommand = 'MoveLineEnd'"
   replace:
   - with:
       variables: [{MatchCounter: "$MatchCounter + 1"}]
@@ -1011,13 +1029,38 @@
       - set_variables: [{SpeakExpression: "'false'"}]
 
 # ========  Move/Read/Describe Next rules =================
+
+# skip invisible chars except for Enhanced mode when "times" should be read
+- name: move-next-invisible
+  tag: "*"
+  match:
+  - "($NavCommand = 'MoveNext' or $NavCommand = 'ReadNext' or $NavCommand = 'DescribeNext') and"
+  - "following-sibling::*[1][translate(., '\u2061\u2062\u2063\u2064', '')='']"
+  replace:
+  - test:
+      if: "$MatchCounter = 0 and $NavVerbosity = 'Verbose'"
+      then:
+      - test:
+        - if: "$NavCommand = 'MoveNext'"
+          then: [{t: "move"}]
+        - else_if: "$NavCommand = 'ReadNext'"
+          then: [{t: "read"}]
+          else: [{t: "describe"}]
+      - t: "right"
+      - pause: short
+  - with:
+      variables: [{MatchCounter: "$MatchCounter + 1"}]
+      replace:
+      - test:
+          if: "following-sibling::*[1][.='\u2062' or .='\u2064'] and $NavMode='Enhanced'"   # invisible times and plus
+          then: [set_variables: [NavNode: "following-sibling::*[1]/@id"]]
+          else: [x: "following-sibling::*[1]"]
+
 - name: move-next-no-auto-zoom-at-edge
-
-
   # at edge of 2D and in a mode where moving right isn't an option
   tag: "*"
   variables: [{EdgeNode: "EdgeNode(., 'right', '2D')"}]
-  match: "$NavCommand = 'MoveNext' and $NavMode!='Character' and not($AutoZoomOut) and DEBUG($EdgeNode/@id)!=@id"
+  match: "$NavCommand = 'MoveNext' and $NavMode!='Character' and not($AutoZoomOut) and $EdgeNode/@id!=@id"
   replace:
   - test:
       if: "$MatchCounter = 0 and $NavVerbosity != 'Terse' and $NavCommand = 'MoveNext'"
@@ -1030,7 +1073,6 @@
   - set_variables: [{SpeakExpression: "'false'"}]
 
 - name: move-next-no-auto-zoom-at-edge-math
-
   # at edge of math -- no where to go (must be after we rule out being at the edge of 2D) because we want to speak that
   tag: "*"
   match:
@@ -1212,6 +1254,33 @@
   - set_variables: [{NavNode: "following-sibling::*[1]/@id"}]
 
 # ========  Move/Read/Describe Previous rules =================
+
+# skip invisible chars except for Enhanced mode when "times" should be read
+- name: move-previous-invisible
+  tag: "*"
+  match:
+  - "($NavCommand = 'MovePrevious' or $NavCommand = 'ReadPrevious' or $NavCommand = 'DescribePrevious') and"
+  - "preceding-sibling::*[1][translate(., '\u2061\u2062\u2063\u2064', '')='']"
+  replace:
+  - test:
+      if: "$MatchCounter = 0 and $NavVerbosity = 'Verbose'"
+      then:
+      - test:
+        - if: "$NavCommand = 'MovePrevious'"
+          then: [{t: "move"}]
+        - else_if: "$NavCommand = 'ReadPrevious'"
+          then: [{t: "read"}]
+          else: [{t: "describe"}]
+      - t: "left"
+      - pause: short
+  - with:
+      variables: [{MatchCounter: "$MatchCounter + 1"}]
+      replace:
+      - test:
+          if: "preceding-sibling::*[1][.='\u2062' or .='\u2064'] and $NavMode='Enhanced'"   # invisible times and plus
+          then: [set_variables: [NavNode: "preceding-sibling::*[1]/@id"]]
+          else: [x: "preceding-sibling::*[1]"]
+
 # two rules for when can't move right
 - name: move-previous-no-auto-zoom-at-edge
   # at edge of 2D and in a mode where moving right isn't an option
@@ -1554,12 +1623,10 @@
 - name: where-am-i-stop
   tag: "*"
   match:
-  - "DEBUG("
   - "($NavCommand = 'WhereAmI' or $NavCommand = 'WhereAmIAll') and $MatchCounter > 0 and"
   # stopping conditions
   - "(self::m:math or "
   - " parent::*[self::m:math and (count(*)=1 or (count(*)=2 and *[2][text()=',' or text()='.' or text()=';' or text()='?']) ) ] "
-  - ")"
   - ")"
   replace:
   - test:
@@ -1570,7 +1637,7 @@
       - set_variables: [{SpeakExpression: "'false'"}]
       else:
       - t: "inside"
-      - pause: long
+      - pause: medium
   - set_variables: [{NavNode: "@id"}]
 
 - name: where-am-i-middle
@@ -1578,7 +1645,7 @@
   match: "$NavCommand = 'WhereAmI' or $NavCommand = 'WhereAmIAll'"
   replace:
   - t: "inside"
-  - pause: long
+  - pause: medium
   - test:
     - if: "$NavMode='Enhanced' and parent::*[self::m:mrow and IsBracketed(., '(', ')', false) or IsBracketed(., '[', ']', false)]"
       then: [{x: ".."}] # auto-zoom up
