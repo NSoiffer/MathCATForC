@@ -113,7 +113,11 @@ fn set_empty_error(result: Result<(), libmathcat::errors::Error>) -> *const c_ch
 /// IMPORTANT: For every MathCAT function that returns a string, it must be free'd with this call
 /// If this is not called, the memory will be leaked.
 pub extern "C" fn FreeMathCATString(str: *mut c_char) {
-    unsafe{ CString::from_raw(str) };
+    unsafe{
+        if !s.is_null() {
+            CString::from_raw(str)
+        };
+    }
 }
 
 #[no_mangle]
