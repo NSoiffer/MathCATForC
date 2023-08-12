@@ -114,8 +114,8 @@ fn set_empty_error(result: Result<(), libmathcat::errors::Error>) -> *const c_ch
 /// If this is not called, the memory will be leaked.
 pub extern "C" fn FreeMathCATString(str: *mut c_char) {
     unsafe{
-        if !s.is_null() {
-            CString::from_raw(str)
+        if !str.is_null() {
+            drop(CString::from_raw(str));
         };
     }
 }
@@ -235,15 +235,6 @@ pub extern "C" fn GetNavigationMathMLId() -> *const c_char {
     }
 }
 
-#[no_mangle]
-/// Return the MathML associated with the current (navigation) node.
-pub extern "C" fn GetNavigationMathML() -> *const c_char {
-    return match get_navigation_mathml() {
-        Err(e) => set_string_error(Err(e)),
-        Ok((nav_mathml, _)) => set_string_error( Ok(nav_mathml) ),
-    }
-}
-
 /// Return the MathML associated with the current (navigation) node.
 pub extern "C" fn GetNavigationMathMLIdOffset() -> i32 {
     return match get_navigation_mathml_id() {
@@ -252,12 +243,13 @@ pub extern "C" fn GetNavigationMathMLIdOffset() -> i32 {
     }
 }
 
+
 #[no_mangle]
 /// Return the MathML associated with the current (navigation) node.
-pub extern "C" fn GetNavigationMathMLOffset() -> i32 {
+pub extern "C" fn GetNavigationMathML() -> *const c_char {
     return match get_navigation_mathml() {
-        Err(e) => set_int_error(Err(e)),
-        Ok((_, nav_offset)) => set_int_error( Ok(nav_offset) ),
+        Err(e) => set_string_error(Err(e)),
+        Ok((nav_mathml, _)) => set_string_error( Ok(nav_mathml) ),
     }
 }
 
