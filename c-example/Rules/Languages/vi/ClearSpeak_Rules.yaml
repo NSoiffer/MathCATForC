@@ -1,4 +1,19 @@
 ---
+
+- name: intent-literal-silent
+  tag: [mi, mo, mn]
+  match: "contains(@data-intent-property, ':silent:')"
+  # say nothing
+  replace: []
+
+# handling of negative numbers is hard -- we do something that is close to right here
+- name: intent-literal-negative-number
+  tag: mn
+  match: "starts-with(text(), '-')" 
+  replace:
+  - T: "trừ"
+  - x: "translate(text(), '-_', '')"   # more accurate to translate "-" to nothing, but turning it into a space should be ok
+
 - name: default
   tag: square-root
   match: "."
@@ -48,7 +63,7 @@
           then: [{T: âm}]
           else: [{T: dương}]
   - test:
-      if: "*[2][self::m:mn or self::m:intent-literal]"
+      if: "*[2][self::m:mn]"
       then_test:
       - if: "*[2][text()='2']"
         then: {T: căn bậc hai}
@@ -603,30 +618,30 @@
       if: "$log_is_simple"
       then_test:
       - if: "*[1][text()='log']"
-        then: [{T: logarit}]
+        then: [{T: lóc}]
       - else_if: $ClearSpeak_Log = 'LnAsNaturalLog'
-        then: [{T: logarit tự nhiên}]
-        else: [{SPELL: "'ln'"}] # t:  -- needs translation?
+        then: [{T: lóc nơ be}]
+        else: [{T: "lóc nơ be"}] # t:  -- needs translation?
       else:
       #    if: "$Verbosity!='Terse' and not(log_is_simple)"
       #   then: {T: the}
       - test:
         - if: "*[1][text()='log']"
-          then: [{T: logarit}]
+          then: [{T: lóc}]
         - else_if: $ClearSpeak_Log = 'LnAsNaturalLog'
-          then: [{T: logarit tự nhiên}]
-          else: [{SPELL: "'ln'"}] # t:  -- needs translation?
+          then: [{T: lóc nơ be}]
+          else: [{T: "lóc nơ be"}] # t:  -- needs translation?
       - T: của
       - pause: short
   - x: "*[3]"
 
 - name: ClearSpeak-multi-line
-  tag: [piecewise, equations, lines] # these are ignored in favor of the ClearSpeak prefs
+  tag: [cases, equations, lines] # these are ignored in favor of the ClearSpeak prefs
   match: "."
   replace:
   - x: "count(*)"
   - test:
-    - if: "($ClearSpeak_MultiLineLabel = 'Auto' and self::m:piecewise) or $ClearSpeak_MultiLineLabel = 'Case'"
+    - if: "($ClearSpeak_MultiLineLabel = 'Auto' and self::m:cases) or $ClearSpeak_MultiLineLabel = 'Case'"
       then: [{T: "trường hợp"}]
     - else_if: "$ClearSpeak_MultiLineLabel = 'Auto' or $ClearSpeak_MultiLineLabel = 'Line'" # already dealt with Auto/Case 
       then: [{T: "dòng"}]
@@ -647,10 +662,10 @@
 
 - name: ClearSpeak-default-multiline
   tag: [mtr, mlabeledtr]
-  match: "parent::m:piecewise or parent::m:equations or parent::m:lines"
+  match: "parent::m:cases or parent::m:equations or parent::m:lines"
   replace:
   - test:
-    - if: "($ClearSpeak_MultiLineLabel = 'Auto' and parent::m:piecewise) or $ClearSpeak_MultiLineLabel = 'Case'"
+    - if: "($ClearSpeak_MultiLineLabel = 'Auto' and parent::m:cases) or $ClearSpeak_MultiLineLabel = 'Case'"
       then: [{T: "trường hợp"}]
     - else_if: "$ClearSpeak_MultiLineLabel = 'Auto' or $ClearSpeak_MultiLineLabel = 'Line'" # already dealt with Auto/Case 
       then: [{T: "dòng"}]
@@ -690,7 +705,7 @@
     test:
       if: "$ClearSpeak_ImpliedTimes = 'None'"
       then: [{T: ""}]
-      else: [{T: lần}]
+      else: [{T: nhân}]
 
 - name: no-times
   tag: mo
@@ -721,7 +736,7 @@
   - "    IsBracketed(., '(', ')') or IsBracketed(., '[(]', ']') or IsBracketed(., '|', '|')]" # followed by parens
   - " )"
   replace:
-  - T: lần
+  - T: nhân
 
 - name: no-say-parens
   tag: mrow

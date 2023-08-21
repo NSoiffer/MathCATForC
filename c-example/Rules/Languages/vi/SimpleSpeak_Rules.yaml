@@ -1,5 +1,19 @@
 ---
 
+- name: intent-literal-silent
+  tag: [mi, mo, mn]
+  match: "contains(@data-intent-property, ':silent:')"
+  # say nothing
+  replace: []
+
+# handling of negative numbers is hard -- we do something that is close to right here
+- name: intent-literal-negative-number
+  tag: mn
+  match: "starts-with(text(), '-')" 
+  replace:
+  - T: "trừ"
+  - x: "translate(text(), '-_', '')"   # more accurate to translate "-" to nothing, but turning it into a space should be ok
+
 - name: default
   tag: square-root
   match: "."
@@ -26,7 +40,7 @@
   #     if: "$Verbosity!='Terse'"
   #     then: [T: the]
   - test:
-      if: "*[2][self::m:mn or self::m:intent-literal]"
+      if: "*[2][self::m:mn]"
       then_test:
       - if: "*[2][text()='2']"
         then: [{T: căn bậc hai}]
@@ -244,7 +258,6 @@
       - x: "*[1]"
 
 - name: times
-
   tag: mo
   match:
   # say "times" when invisible times is followed by parens or a superscript that has a base with parens or "|"s
@@ -262,7 +275,7 @@
   - "    IsBracketed(., '(', ')') or IsBracketed(., '[(]', ']') or IsBracketed(., '|', '|')]" # followed by parens
   - " )"
   replace:
-  - T: lần
+  - T: nhân
 
 - name: no-say-parens
   tag: mrow

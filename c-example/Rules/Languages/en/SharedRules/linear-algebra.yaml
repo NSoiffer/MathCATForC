@@ -1,114 +1,121 @@
 ---
 
-- name: simple-determinant
+- name: scalar-determinant
   tag: determinant
-  match: "not(*[1][self::m:mtr])"
+  match: "count(*)=1 and not(*[1][self::m:mtr])"
   replace:
   - test:
       if: "$Verbosity='Verbose'"
       then:
-      - t: "the"
-  - t: "determinant"
+      - t: "the"      # phrase('the' square root of 25 equals 5)
+  - t: "determinant"      # phrase(the 'determinant' of a matrix)
   - test:
       if: "$Verbosity!='Terse'"
       then:
-      - t: "of"
+      - t: "of"      # phrase(systems 'of' linear equations)
   - x: "*[1]"
+  - test:
+      if: "not(IsNode(*[1], 'simple'))"
+      then: [t: "end determinant"]      # phrase('end determinant' of a matrix)
 
 - name: norm
   tag: norm
-  match: "not(@data-intent-hint)"
+  match: "count(*)=1 and not(@data-intent-property)"
   replace:
   - test:
       if: "$Verbosity='Verbose'"
       then:
-      - t: "the"
-  - t: "norm"
+      - t: "the"      # phrase('the' square root of 25 equals 5)
+  - t: "norm"      # phrase(the 'norm' can be a measure of distance)
   - test:
       if: "$Verbosity!='Terse'"
       then:
-      - t: "of"
+      - t: "of"      # phrase(this is the mean 'of' the data)
   - x: "*[1]"
+  - test:
+      if: "not(IsNode(*[1], 'simple'))"
+      then: [t: "end norm"]      # phrase('end norm' that is a measure of distance)
+
 
 - name: subscripted-norm
   tag: subscripted-norm
-  match: "not(@data-intent-hint)"
+  match: count(*)=2 and "not(@data-intent-property)"
   replace:
   - test:
       if: "$Verbosity='Verbose'"
       then:
-      - t: "the"
+      - t: "the"      # phrase('the' square root of 25 equals 5)
   - x: "*[2]"
-  - t: "norm"
+  - t: "norm"      # phrase(the 'norm' can be a measure of distance)
   - test:
       if: "$Verbosity!='Terse'"
       then:
-      - t: "of"
+      - t: "of"      # phrase(systems 'of' linear equations)
   - x: "*[1]"
 
 - name: transpose
   tag: transpose
-  match: "not(@data-intent-hint)"
+  match: "count(*)=1 and not(@data-intent-property)"
   replace:
   - x: "*[1]"
-  - t: "transpose"
+  - t: "transpose"      # phrase(this will 'transpose' the values)
 - name: trace
   tag: trace
-  match: "not(@data-intent-hint)"
+  match: "not(@data-intent-property)"
   replace:
   - test:
       if: "$Verbosity='Verbose'"
       then:
-      - t: "the"
-  - t: "trace"
+      - t: "the"      # phrase('the' square root of 25 equals 5)
+  - t: "trace"      # phrase('trace' of a matrix)
   - test:
       if: "$Verbosity!='Terse'"
       then:
-      - t: "of"
+      - t: "of"      # phrase(systems 'of' linear equations)
   - x: "*[1]"
 
 - name: dimension
   tag: dimension
-  match: "not(@data-intent-hint)"
+  match: "count(*)=1 and not(@data-intent-property)"
   replace:
   - test:
       if: "$Verbosity='Verbose'"
       then:
-      - t: "the"
-  - t: "dimension"
+      - t: "the"      # phrase('the' square root of 25 equals 5)
+  - t: "dimension"      # phrase(the 'dimension' of the matrix)
   - test:
       if: "$Verbosity!='Terse'"
       then:
-      - t: "of"
+      - t: "of"      # phrase(systems 'of' linear equations)
   - x: "*[1]"
 
 - name: homomorphism
   tag: homomorphism
-  match: "not(@data-intent-hint)"
+  match: "count(*)=1 and not(@data-intent-property)"
   replace:
   - test:
       if: "$Verbosity='Verbose'"
       then:
-      - t: "the"
-  - t: "homomorphism"
+      - t: "the"      # phrase('the' square root of 25 equals 5)
+  - t: "homomorphism"      # phrase('homomorphism' indicates similarity of form)
   - test:
       if: "$Verbosity!='Terse'"
       then:
-      - t: "of"
+      - t: "of"      # phrase(systems 'of' linear equations)
   - x: "*[1]"
 
 - name: kernel
   tag: kernel
-  match: "not(@data-intent-hint)"
+  match: "count(*)=1 and not(@data-intent-property)"
   replace:
   - test:
       if: "$Verbosity='Verbose'"
       then:
-      - t: "the"
-  - t: "kernel"
+      - t: "the"      # phrase('the' square root of 25 equals 5)
+  - t: "kernel"      # phrase(this is the 'kernel' of the function)
   - test:
       if: "$Verbosity!='Terse'"
       then:
-      - t: "of"
+      - t: "of"      # phrase(systems 'of' linear equations)
   - x: "*[1]"
 

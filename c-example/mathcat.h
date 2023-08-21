@@ -90,7 +90,4 @@ const char *GetNavigationMathMLId();
 /// Return the MathML associated with the current (navigation) node.
 const char *GetNavigationMathML();
 
-/// Return the MathML associated with the current (navigation) node.
-int32_t GetNavigationMathMLOffset();
-
 } // extern "C"

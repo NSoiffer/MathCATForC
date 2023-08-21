@@ -4,16 +4,16 @@
    tag: msqrt
    match: "."
    replace: 
-   - T: "1⠩"
+   - T: "⠩"
    - x: "*"
-   - T: "1⠱"
+   - T: "⠱"
 
 -
    name: default
    tag: mroot
    match: "."
    replace: 
-   - T: "1⠩⠔"
+   - T: "⠩⠔"
    - test:
       if:   # FIX: need to add arbitrary shapes here (see also msub/msup)
       - "*[2][self::m:mn or"
@@ -26,12 +26,12 @@
       then:
       - x: "*[2]"
       else:
-      - T: "1⠣"
+      - T: "⠣"
       - x: "*[2]"
-      - T: "1⠜"
+      - T: "⠱"
    - T: "#"    # signal end of script/numeric mode
    - x: "*[1]"
-   - T: "1⠱"
+   - T: "⠱"
         
                
 # Fraction rules
@@ -49,8 +49,13 @@
    replace: 
    - T: "#"    # signal end of previous numeric mode
    - x: "*[1]"
-   - t: "N⠌"
-   - x: "*[2]"
+   - test:
+      if: "$Vietnam_UseDropNumbers='true'"
+      then:
+      - x: "BrailleChars(translate(*[2], '0123456789', '\ue000\ue001\ue002\ue003\ue004\ue005\ue006\ue007\ue008\ue009'), 'UEB')"   # drop numbers for the denominator
+      else:
+      - T: "N⠌"
+      - x: "*[2]"
 
 -
    name: simple-number
@@ -59,19 +64,46 @@
    replace: 
    - T: "#"    # signal end of any previous numeric mode (probably not needed, but...)
    - x: "*[1]"
-   - T: "N⠌"
-   - x: "*[2]"
+   - test:
+      if: "$Vietnam_UseDropNumbers='true'"
+      then:
+      - x: "BrailleChars(translate(*[2], '0123456789', '\ue000\ue001\ue002\ue003\ue004\ue005\ue006\ue007\ue008\ue009'), 'UEB')"   # drop numbers for the denominator
+      else:
+      - T: "N⠌"
+      - x: "*[2]"
 
 -
    name: default
    tag: mfrac
    match: "."
    replace: 
-   - T: "1⠆"
+   - T: "⠆"
    - x: "*[1]"
    - T: "⠌"
    - x: "*[2]"
-   - T: "1⠰"
+   - T: "⠰"
+
+-
+   #GTM 14.3.3 (not sure what else vertical juxtaposition applies to)
+   name: binomial-frac
+   tag: mrow
+   match: "IsBracketed(., '(', ')') and *[2][self::m:mfrac][@linethickness=0]"
+   replace: 
+   - x: "*[1]"
+   - x: "*[2]/*[1]"
+   - t: "⠰⠻"
+   - x: "*[2]/*[2]"
+   - x: "*[3]"
+
+- name: binomial-table
+  tag: mrow
+  match: "IsBracketed(., '(', ')') and *[2][self::m:mtable][count(*)=2 and count(*[1])=1] and contains(@intent, 'binomial(')"
+  replace:
+     - x: "*[1]"
+     - x: "*[2]/*[1]/*[1]/*[1]"
+     - t: "⠰⠻"
+     - x: "*[2]/*[2]/*[1]/*[1]"
+     - x: "*[3]"
 
 
 #
@@ -147,18 +179,6 @@
    replace: [x: "*"]
 
 -
-   #GTM 14.3.3 (not sure what else vertical juxtaposition applies to)
-   name: binomial-frac
-   tag: mrow
-   match: "IsBracketed(., '(', ')') and *[2][self::m:mfrac][@linethickness=0]"
-   replace: 
-   - x: "*[1]"
-   - x: "*[2]/*[1]"
-   - t: "⠰⠻"
-   - x: "*[2]/*[2]"
-   - x: "*[3]"
-
--
     name: empty-mrow
     tag: mrow
     match: "not(*)"
@@ -180,7 +200,7 @@
       - "IsInDefinition(., 'GeometryPrefixOperators')"
    replace:
       - x: "text()"
-      - t: "W"
+      - t: ""
 
 -
    name: default
@@ -195,12 +215,12 @@
             - test:
                if: "preceding-sibling::* and 
                     not(IsInDefinition(preceding-sibling::*[1], 'NemethPunctAndOpenBeforeSymbols'))" #Rule 151
-               then: [t: "W"]
+               then: [t: ""]
       - x: "text()"
       - test:
          if: "$MaybeAddSpaces and following-sibling::* and 
               not(IsInDefinition(following-sibling::*[1], 'NemethPunctAndOpenAfterSymbols'))" #Rule 151"
-         then: [t: "W"]
+         then: [t: ""]
 
 -
    # Non-breaking whitespace is added to the start/end of numbers in cases of adjoining text to help the parse.
@@ -214,28 +234,28 @@
    - test:
       if: "starts-with(., '\u00A0')"
       then:
-      - t: "W"
+      - t: ""
       - test:
          if: "substring(., string-length(.), 1)='\u00A0'"
          then:
-         - x: "BrailleChars(., 'UEB', 2, string-length(.)-1)"
+         - x: "BrailleChars(., 'UEB', 2, string-length(.))"
          - test:
             if: following-sibling::*[2][@class='MathML-unit' or BaseNode(.)[@class='MathML-unit']]  # '*[2]' to skip invisible times
             then: [t: "𝐖"]   # BANA 5(a) -- Units are treated as separate exprs
-            else: [t: "W"]
+            else: [t: ""]
          else:
-         - x: "BrailleChars(., 'UEB', 2, string-length(.))"
+         - x: "BrailleChars(., 'UEB', 2, string-length(.)+1)"
       else:
       - test:
          if: "substring(., string-length(.), 1)='\u00A0'"
          then:
-         - x: "BrailleChars(., 'UEB', 1, string-length(.)-1)"
+         - x: "BrailleChars(., 'UEB', 1, string-length(.))"
          - test:
             if: following-sibling::*[2][@class='MathML-unit' or BaseNode(.)[@class='MathML-unit']]  # '*[2]' to skip invisible times
             then: [t: "𝐖"]   # BANA 5(a) -- Units are treated as separate exprs
-            else: [t: "W"]
+            else: [t: ""]
          else:
-         - x: "BrailleChars(., 'UEB', 1, string-length(.))"
+         - x: "BrailleChars(., 'UEB', 1, string-length(.)+1)"
 
 -
    name: default
@@ -243,7 +263,62 @@
    match: "."
    replace:
    - x: "BrailleChars(., 'UEB')"
-      
+
+- 
+   name: sin
+   tag: mi
+   match: "text()='sin'"
+   replace:
+   - t: "⠻⠎"
+   
+- 
+   name: cos
+   tag: mi
+   match: "text()='cos'"
+   replace:
+   - t: "⠻⠉"
+   
+- 
+   name: tan
+   tag: mi
+   match: "text()='tan'"
+   replace:
+   - t: "⠻⠞"
+   
+- 
+   name: cot
+   tag: mi
+   match: "text()='cot'"
+   replace:
+   - t: "⠻⠉⠞"
+   
+- 
+   name: arcsin
+   tag: mi
+   match: "text()='arcsin'"
+   replace:
+   - t: "⠁⠗⠉⠻⠎"
+   
+- 
+   name: arccos
+   tag: mi
+   match: "text()='arccos'"
+   replace:
+   - t: "⠁⠗⠉⠻⠉"
+   
+- 
+   name: arctan
+   tag: mi
+   match: "text()='arctan'"
+   replace:
+   - t: "⠁⠗⠉⠻⠞"
+   
+- 
+   name: arccot
+   tag: mi
+   match: "text()='arccot'"
+   replace:
+   - t: "⠁⠗⠉⠻⠉⠞"
 
 -
    # FIX: need to deal with all caps
@@ -264,6 +339,18 @@
       then: [x: "*"]
       # else do nothing -- no content
 
+
+-
+   name: angle   # angles need a shape indicator -- not sure this is the best test (three letters in base, have invisible separators)
+   tag: mover
+   match: "*[2][text()='^'] and *[1][
+              self::m:mrow and count(*)=5 and
+              *[1][self::m:mi] and *[2][text()='\u2063'] and *[3][self::m:mi] and *[4][text()='\u2063'] and *[5][self::m:mi]
+            ]"
+   replace:
+   - t: "⠫⠛"     # shape indicator, g
+   - x: "*[1]"
+
 -
    name: single-char-exceptions    # GTM 12
    tag: [mover, munder]
@@ -282,12 +369,12 @@
       - "not(*[1][self::m:mn] and preceding-sibling::*[1][text()='\u2062'][preceding-sibling::*[1][self::m:mn]])"  # need to make clear this 'mn' is base
       then: [x: "*[1]"]
       else:
-      - t: "1⠣"
+      - t: "⠣"
       - x: "*[1]"
-      - t: "1⠜"
+      - t: "⠜"
    - test:
       if: "*[2][translate(., '_¯→^', '') = '']"
-      then: [t: "1"]
+      then: [t: ""]
    - test:
       if: "self::m:munder"
       then: [t: "⠠"]
@@ -306,7 +393,7 @@
 
 -
    name: single-char-exceptions    # RUEB 3.11 -- ° and various prime/minute/seconds aren't treated as if superscripts
-   tag: [msup]
+   tag: msup
    match: "*[2][translate(., \"'*`ª°²³´¹º‘’“”‟′″‴‵‶‷⁗\",'')='']"
    replace: [x: "*"]
 
@@ -323,20 +410,20 @@
       - "   )"
       then: [x: "*[1]"]
       else:
-      - t: "1⠣"
+      - t: "⠣"
       - x: "*[1]"
-      - t: "1⠜"
+      - t: "⠜"
    - with:   # this could be tighter and be just around the *[2] part, but this is consistent with msubsup below
       variables: [NewScriptContext: "in"]   # value doesn't matter -- just can't be empty string
       replace:
       - test:
          - if: "self::m:msup"
-           then: [T: "1⠔"]
+           then: [T: "⠔"]
          - else_if: "self::m:msub"
-           then: [T: "1⠢"]
+           then: [T: "⠢"]
          - else_if: "self::m:munder"
-           then: [T: "1⠢"]
-           else: [T: "1⠔"]  # mover
+           then: [T: "⠢"]
+           else: [T: "⠔"]  # mover
       - test:
          # omit grouping indicators in the following cases
          if:   # FIX: need to add arbitrary shapes here (also for mroot) also multi-char leaf translations except mi
@@ -350,9 +437,9 @@
          - "    ]"
          then: [x: "*[2]"]
          else:
-         - t: "1⠣"
+         - t: "⠣"
          - x: "*[2]"
-         - t: "1⠜"
+         - t: "⠱"
    - t: "#"   # signal end script/numeric mode
 
 
@@ -371,16 +458,16 @@
       - "    ])"
       then: [x: "*[1]"]
       else:
-      - t: "1⠣"
+      - t: "⠣"
       - x: "*[1]"
-      - t: "1⠜"
+      - t: "⠜"
    - with: 
       variables: [NewScriptContext: "in"]   # value doesn't matter -- just can't be empty string
       replace:
       - test:
          - if: "self::m:munderover"
-           then: [t: "1⠨⠢"]
-           else: [t: "1⠢"]
+           then: [t: "⠨⠢"]
+           else: [t: "⠢"]
       - test:
          # omit grouping indicators in the following cases
          if:   # FIX: need to add arbitrary shapes here (also for mroot) also multi-char leaf translations except mi
@@ -394,13 +481,13 @@
          - "    ]"
          then: [x: "*[2]"]
          else:
-         - t: "1⠣"
+         - t: "⠣"
          - x: "*[2]"
-         - t: "1⠜"
+         - t: "⠜"
       - test:
          - if: "self::m:munderover"
-           then: [t: "1⠨⠔"]
-           else: [t: "1⠔"]
+           then: [t: "⠨⠔"]
+           else: [t: "⠔"]
       - test:
          # omit grouping indicators in the following cases
          if:   # FIX: need to add arbitrary shapes here (also for mroot) also multi-char leaf translations except mi
@@ -414,9 +501,9 @@
          - "    ]"
          then: [x: "*[3]"]
          else:
-         - t: "1⠣"
+         - t: "⠣"
          - x: "*[3]"
-         - t: "1⠜"
+         - t: "⠜"
    - t: "#"   # signal end script/numeric mode
 
 -
@@ -438,7 +525,7 @@
          - with:
             variables: [NewScriptContext: "in"]   # value doesn't matter -- just can't be empty string
             replace:
-            - t: "1⠢"
+            - t: "⠢"
             - test:
                # omit grouping indicators in the following cases
                if:   # FIX: need to add arbitrary shapes here (also for mroot)
@@ -452,16 +539,16 @@
                - "    ]"
                then: [x: "$Prescripts[1]"]
                else:
-               - t: "1⠣"
+               - t: "⠣"
                - x: "$Prescripts[1]"
-               - t: "1⠜"
+               - t: "⠜"
       - test:
          if: "not($Prescripts[2][self::m:none])"
          then:
          - with:
             variables: [NewScriptContext: "in"]   # value doesn't matter -- just can't be empty string
             replace:
-            - t: "1⠔"
+            - t: "⠔"
             - test:
                # omit grouping indicators in the following cases
                if:   # FIX: need to add arbitrary shapes here (also for mroot)
@@ -475,9 +562,9 @@
                - "    ]"
                then: [x: "$Prescripts[2]"]
                else:
-               - t: "1⠣"
+               - t: "⠣"
                - x: "$Prescripts[2]"
-               - t: "1⠜"
+               - t: "⠜"
       - test:
          if: "count($Prescripts)>2"
          then:
@@ -487,7 +574,7 @@
             - with:
                variables: [NewScriptContext: "in"]   # value doesn't matter -- just can't be empty string
                replace:
-               - t: "1⠢"
+               - t: "⠢"
                - test:
                   # omit grouping indicators in the following cases
                   if:   # FIX: need to add arbitrary shapes here (also for mroot)
@@ -501,16 +588,16 @@
                   - "    ]"
                   then: [x: "$Prescripts[3]"]
                   else:
-                  - t: "1⠣"
+                  - t: "⠣"
                   - x: "$Prescripts[3]"
-                  - t: "1⠜"
+                  - t: "⠜"
          - test:
             if: "not($Prescripts[4][self::m:none])"
             then:
             - with:
                variables: [NewScriptContext: "in"]   # value doesn't matter -- just can't be empty string
                replace:
-               - t: "1⠔"
+               - t: "⠔"
                - test:
                   # omit grouping indicators in the following cases
                   if:   # FIX: need to add arbitrary shapes here (also for mroot)
@@ -524,9 +611,9 @@
                   - "    ]"
                   then: [x: "$Prescripts[4]"]
                   else:
-                  - t: "1⠣"
+                  - t: "⠣"
                   - x: "$Prescripts[4]"
-                  - t: "1⠜"
+                  - t: "⠜"
          - test:
             if: "count($Prescripts) > 4"   # give up and just dump them out so at least the content is there
             then: [x: "$Prescripts[position() > 4]"]
@@ -541,7 +628,7 @@
          - with:
             variables: [NewScriptContext: "in"]   # value doesn't matter -- just can't be empty string
             replace:
-            - t: "1⠢"
+            - t: "⠢"
             - test:
                # omit grouping indicators in the following cases
                if:   # FIX: need to add arbitrary shapes here (also for mroot)
@@ -555,16 +642,16 @@
                - "    ]"
                then: [x: "$Postscripts[1]"]
                else:
-               - t: "1⠣"
+               - t: "⠣"
                - x: "$Postscripts[1]"
-               - t: "1⠜"
+               - t: "⠱"
       - test:
          if: "not($Postscripts[2][self::m:none])"
          then:
          - with:
             variables: [NewScriptContext: "in"]   # value doesn't matter -- just can't be empty string
             replace:
-            - t: "1⠔"
+            - t: "⠔"
             - test:
                # omit grouping indicators in the following cases
                if:   # FIX: need to add arbitrary shapes here (also for mroot)
@@ -578,9 +665,9 @@
                - "    ]"
                then: [x: "$Postscripts[2]"]
                else:
-               - t: "1⠣"
+               - t: "⠣"
                - x: "$Postscripts[2]"
-               - t: "1⠜"
+               - t: "⠱"
       - test:
          if: "count($Postscripts)>2"
          then:
@@ -590,7 +677,7 @@
             - with:
                variables: [NewScriptContext: "in"]   # value doesn't matter -- just can't be empty string
                replace:
-               - t: "1⠢"
+               - t: "⠢"
                - test:
                   # omit grouping indicators in the following cases
                   if:   # FIX: need to add arbitrary shapes here (also for mroot)
@@ -604,16 +691,16 @@
                   - "    ]"
                   then: [x: "$Postscripts[3]"]
                   else:
-                  - t: "1⠣"
+                  - t: "⠣"
                   - x: "$Postscripts[3]"
-                  - t: "1⠜"
+                  - t: "⠱"
          - test:
             if: "not($Postscripts[4][self::m:none])"
             then:
             - with:
                variables: [NewScriptContext: "in"]   # value doesn't matter -- just can't be empty string
                replace:
-               - t: "1⠔"
+               - t: "⠔"
                - test:
                   # omit grouping indicators in the following cases
                   if:   # FIX: need to add arbitrary shapes here (also for mroot)
@@ -627,9 +714,9 @@
                   - "    ]"
                   then: [x: "$Postscripts[4]"]
                   else:
-                  - t: "1⠣"
+                  - t: "⠣"
                   - x: "$Postscripts[4]"
-                  - t: "1⠜"
+                  - t: "⠱"
          - test:
             if: "count($Postscripts)>4"
             then:
@@ -639,7 +726,7 @@
                - with:
                   variables: [NewScriptContext: "in"]   # value doesn't matter -- just can't be empty string
                   replace:
-                  - t: "1⠢"
+                  - t: "⠢"
                   - test:
                      # omit grouping indicators in the following cases
                      if:   # FIX: need to add arbitrary shapes here (also for mroot)
@@ -653,16 +740,16 @@
                      - "    ]"
                      then: [x: "$Postscripts[5]"]
                      else:
-                     - t: "1⠣"
+                     - t: "⠣"
                      - x: "$Postscripts[5]"
-                     - t: "1⠜"
+                     - t: "⠱"
             - test:
                if: "not($Postscripts[6][self::m:none])"
                then:
                - with:
                   variables: [NewScriptContext: "in"]   # value doesn't matter -- just can't be empty string
                   replace:
-                  - t: "1⠔"
+                  - t: "⠔"
                   - test:
                      # omit grouping indicators in the following cases
                      if:   # FIX: need to add arbitrary shapes here (also for mroot)
@@ -676,9 +763,9 @@
                      - "    ]"
                      then: [x: "$Postscripts[6]"]
                      else:
-                     - t: "1⠣"
+                     - t: "⠣"
                      - x: "$Postscripts[6]"
-                     - t: "1⠜"
+                     - t: "⠱"
             - test:
                if: "count($Postscripts)>6"
                then:
@@ -688,7 +775,7 @@
                   - with:
                      variables: [NewScriptContext: "in"]   # value doesn't matter -- just can't be empty string
                      replace:
-                     - t: "1⠢"
+                     - t: "⠢"
                      - test:
                         # omit grouping indicators in the following cases
                         if:   # FIX: need to add arbitrary shapes here (also for mroot)
@@ -702,16 +789,16 @@
                         - "    ]"
                         then: [x: "$Postscripts[7]"]
                         else:
-                        - t: "1⠣"
+                        - t: "⠣"
                         - x: "$Postscripts[7]"
-                        - t: "1⠜"
+                        - t: "⠱"
                - test:
                   if: "not($Postscripts[8][self::m:none])"
                   then:
                   - with:
                      variables: [NewScriptContext: "in"]   # value doesn't matter -- just can't be empty string
                      replace:
-                     - t: "1⠔"
+                     - t: "⠔"
                      - test:
                         # omit grouping indicators in the following cases
                         if:   # FIX: need to add arbitrary shapes here (also for mroot)
@@ -725,9 +812,9 @@
                         - "    ]"
                         then: [x: "$Postscripts[8]"]
                         else:
-                        - t: "1⠣"
+                        - t: "⠣"
                         - x: "$Postscripts[8]"
-                        - t: "1⠜"
+                        - t: "⠱"
                - test:
                   if: "count($Postscripts) > 8"   # give up and just dump them out so at least the content is there
                   then:
@@ -769,14 +856,14 @@
       # - test:
       #       if: "$AddSpaces"
       #       then: [t: " "]
-      - T: "1⠫⠼⠙"                                  # square (no rectangle in UEB)
+      - T: "⠫⠼⠙"                                  # square (no rectangle in UEB)
    - test:
       if: "contains(@notation,'circle')"
       then:
       # - test:
       #    if: "$AddSpaces"
       #    then: [t: " "]
-      - t: "1⠫⠿"                                  # circle (no oval in UEB)
+      - t: "⠫⠿"                                  # circle (no oval in UEB)
 # ??? What should happen with arrow?
 #  If there is a box/circle with arrows only and an empty child,
 #     then it acts like the arrow is the child
@@ -839,9 +926,9 @@
       - "    ]"
       then: [x: "*[1]"]
       else:
-      - t: "1⠣"
+      - t: "⠣"
       - x: "*[1]"
-      - t: "1⠜"
+      - t: "⠜"
 
    # - test:
    #    if: "contains(@notation,'phasorangle')"  #FIX: what should this be???
@@ -851,29 +938,29 @@
       then:
       - test:
          - if: "contains(@notation,'rightarrow')" 
-           then: [t: "1⠳⠕"]                                                           
+           then: [t: "⠳⠕"]                                                           
          - else_if: "contains(@notation,'leftarrow')" 
-           then: [t: "1⠳⠪"]                                                           
+           then: [t: "⠳⠪"]                                                           
          - else_if: "contains(@notation,'uparrow')" 
-           then: [t: "1⠳⠬ "]                                                           
+           then: [t: "⠳⠬ "]                                                           
          - else_if: "contains(@notation,'downarrow')" 
-           then: [t: "1⠳⠩"]                                                           
+           then: [t: "⠳⠩"]                                                           
          - else_if: "contains(@notation,'northeastarrow')" 
-           then: [t: "1⠳⠎"]                                                           
+           then: [t: "⠳⠎"]                                                           
          - else_if: "contains(@notation,'southeastarrow')" 
-           then: [t: "1⠳⠣"]                                                           
+           then: [t: "⠳⠣"]                                                           
          - else_if: "contains(@notation,'northwestarrow')" 
-           then: [t: "1⠳⠱"]                                                           
+           then: [t: "⠳⠱"]                                                           
          - else_if: "contains(@notation,'southwestarrow')" 
-           then: [t: "1⠳⠜"]                                                           
+           then: [t: "⠳⠜"]                                                           
          - else_if: "contains(@notation,'leftrightarrow')" 
-           then: [t: "1⠳⠺⠗⠕"]                                                           
+           then: [t: "⠳⠺⠗⠕"]                                                           
          - else_if: "contains(@notation,'updownarrow')" 
-           then: [t: "1⠳⠺⠗⠬"]                                                           
+           then: [t: "⠳⠺⠗⠬"]                                                           
          - else_if: "contains(@notation,'northeastsouthwestarrow')" 
-           then: [t: "1⠳⠺⠗⠎"]                                                           
+           then: [t: "⠳⠺⠗⠎"]                                                           
          - else_if: "contains(@notation,'northwestsoutheastarrow')" 
-           then: [t: "1⠳⠺⠗⠣"]                                                           
+           then: [t: "⠳⠺⠗⠣"]                                                           
    - test:
       if: "contains(@notation,'top')"
       then: [t: "⠱"]                                                                
@@ -884,7 +971,7 @@
       if: "contains(@notation,'updiagonalstrike') or contains(@notation,'downdiagonalstrike') or 
             contains(@notation,'verticalstrike') or contains(@notation,'horizontalstrike')"
       then:
-         - t: "1⠈⠱"                        # cancellation
+         - t: "⠈⠱"                        # cancellation
    - test:
       if:
       - "not($AddSpaces) and contains(@notation,'box') or contains(@notation,'circle') or"

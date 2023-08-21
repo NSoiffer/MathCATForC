@@ -62,32 +62,44 @@
 
  - "0-9": [t: "."]
 
- - "!": [t: "factorial"]                           # 0x21
+ - "!":                                            # 0x21
+    - test:
+        if: "ancestor-or-self::*[contains(@data-intent-property, ':structure:')]"
+        then_test:
+            if: "$Verbosity = 'Terse'"
+            then: [t: "bang"]                      # 0x21
+            else: [t: "exclamation point"]          # 0x21
+        else: [t: "factorial"]                     # 0x21
+          
  - "\"": [t: "quotation mark"]                     # 0x22
  - "#": [t: "number"]                              # 0x23
  - "$": [t: "dollars"]                             # 0x24
  - "%": [t: "percent"]                             # 0x25
  - "&": [t: "ampersand"]                           # 0x26
  - "'": [t: "apostrophe"]                          # 0x27
- - "(":                                          # 0x28
+ - "(":                                            # 0x28
     - test:
         if: $SpeechStyle = 'ClearSpeak' or $SpeechStyle = 'SimpleSpeak'
         then_test:
             if: "$Verbosity='Terse'"
-            then: [t: "open"]
-            else: [t: "open paren"]
-        else: [t: "left paren"]                            
+            then: [t: "open"]                     # 0x28
+            else: [t: "open paren"]               # 0x28
+        else: [t: "left paren"]                   # 0x28                         
  - ")":                                          # 0x29
     - test:
         if: $SpeechStyle = 'ClearSpeak' or $SpeechStyle = 'SimpleSpeak'
         then_test:
             if: "$Verbosity='Terse'"
-            then: [t: "close"]
-            else: [t: "close paren"]
-        else: [t: "right paren"]                            
+            then: [t: "close"]                   # 0x29
+            else: [t: "close paren"]             # 0x29
+        else: [t: "right paren"]                 # 0x29                 
 
- - "*": [t: "times"]                               # 0x2a
- - "+": [t: "plus"]                                # 0x2b
+ - "*":                                          # 0x2a
+    test:
+        if: "parent::*[name(.)='msup' or name(.)='msubsup' or name(.)='skip-super']"
+        then: [t: "star"]                        # 0x2a
+        else: [t: "times"]                       # 0x2a
+ - "+": [t: "plus"]                              # 0x2b
  - ",":                                          # 0x2c
     # the following deals with the interaction of "," with "…" which sometimes wants the ',' to be silent
     # that this test is here and not with "…" is not ideal, but seems simplest
@@ -98,7 +110,7 @@
                # speak "comma" when not adjacent to '…'
             - "( following-sibling::*[1][text()!= '…'] and preceding-sibling::*[1][text()!='…']  ) or "
                # except if expression starts with '…'
-            - " ../*[1][text()='…'] "
+            - "../*[1][text()='…'] "
         then: [t: "comma"]
         # else silent
 
@@ -166,9 +178,12 @@
         else: [t: "right brace"]                            
 
  - "~": [t: "tilde"]                               # 0x7e
- - " ": [t: ""]                                  # 0xa0
- - "¢": [t: "cents"]                               # 0xa2
- - "£": [t: "pounds"]                              # 0xa3
+ - " ":                                            # 0xa0
+    - test:
+        if: "@data-empty-in-2D and ../../../../*[name(.)!='equations']"
+        then: [t: "empty"]                         # want to say something for fraction (etc) with empty child
+        else: [t: ""]                            
+
  - "¬": [t: "not"]                                 # 0xac
  - "°": [t: "degrees"]                           # 0xb0
  - "±": [t: "plus or minus"]                       # 0xb1
@@ -251,7 +266,6 @@
  - "—": [t: "em dash"]                             # 0x2014
  - "―": [t: "horizontal bar"]                      # 0x2015
  - "‖": [t: "double vertical line"]                # 0x2016
- - "•": [t: "bullet"]                              # 0x2022
  - "…":                                          # 0x2026
     test:
         if:
@@ -267,7 +281,8 @@
 
  - "⁡":                                          # 0x2061
     - test:
-        if: "$Verbosity!='Terse' and not(preceding-sibling::*[1][IsInDefinition(., 'GeometryShapes')])" 
+        if: "$Verbosity!='Terse' and not(preceding-sibling::*[1][IsInDefinition(., 'GeometryShapes')]) and
+             not(@data-changed='added' and ancestor-or-self::*[contains(@data-intent-property, ':structure:')])"
         then: [t: "of"]
  - "⁢": [t: ""]                                   # 0x2062
  - "⁣": [t: ""]                                   # 0x2063
@@ -275,9 +290,6 @@
  - "′": [t: "prime"]                               # 0x2032
  - "″": [t: "double prime"]                        # 0x2033
  - "‴": [t: "triple prime"]                        # 0x2034
- - "‵": [t: "reversed prime"]                      # 0x2035
- - "‶": [t: "reversed double prime"]               # 0x2036
- - "‷": [t: "reversed triple prime"]               # 0x2037
 
  - "ℂℕℚℝℤ":     # here we rely on this running through the table again to speak "cap xxx"
     - t: "double-struck"
@@ -406,7 +418,6 @@
  - "∓": [t: "minus or plus"]                       # 0x2213
  - "∗": [t: "times"]                               # 0x2217
  - "∘": [t: "composed with"]                       # 0x2218
- - "∙": [t: "times"]                               # 0x2219
  - "√":                                          # 0x221a
      - test: 
          if: "$Verbosity!='Terse'"
@@ -464,7 +475,7 @@
      - test: 
          if: "$Verbosity!='Terse'"
          then: [t: "is"]
-     - t: " identical to"
+     - t: "identical to"
  - "≤":                                          # 0x2264
      - test: 
          if: "$Verbosity!='Terse'"

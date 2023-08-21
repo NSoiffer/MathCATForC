@@ -1,6 +1,6 @@
 [package]
 name = "mathcat_c"
-version = "0.2.0"
+version = "0.3.6"
 authors = ["Neil Soiffer <soiffer@alum.mit.edu>"]
 edition = "2021"
 license = "MIT"
@@ -8,9 +8,9 @@ description = "C/C++ interface for MathCAT (for MathCAT info, see crates.io or n
 
 
 [dependencies.mathcat]
-version = "0.2.1"
+version = "0.3.6"
 # for testing MathCAT without having to publish a new version (change two occurences)
-# path = "../MathCAT/"
+#path = "../MathCAT/"
 
 [lib]
 name = "libmathcat_c"
@@ -20,9 +20,9 @@ crate-type = ["cdylib"]      # Creates dynamic lib
 [build-dependencies]
 zip = { version = "0.6.2", default-features = false, features = ["deflate"] }
 cbindgen = "0.20.0"
-mathcat = "0.2.1"
+ mathcat = "0.3.6"
 # for testing MathCAT without having to publish a new version (change two occurences)
-# mathcat = {path = "../MathCAT/"}
+#mathcat = {path = "../MathCAT/"}
 
 [profile.release]
 debug = true

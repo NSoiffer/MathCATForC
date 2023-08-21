@@ -79,9 +79,10 @@
        # FIX: consider adding ]...[ versions
     - "(*[1][text()='(' or text()='['] and *[3][text()=')' or text()=']']) and"   # match bracketing
     - "(*[2][count(*)=3 and *[2][text()=',']]) and"                               # inside should have ','
+    - "not(ancestor::*[IsBracketed(., '{', '}')]) and "                           # intervals are not part of set notation (e.g, { (x,y)∈L | ...})
       # FIX: if both the first and third children of *[2] are mn, then make sure first <= third
     - "("
-    - "  not(IsBracketed(., '(', ')')) or "                                                                   # not (.,.) is less ambiguous
+    - "  not(IsBracketed(., '(', ')')) or "                                                                   # (.,.) is very ambiguous -- need more clues
     - "  $ClearSpeak_Paren = 'Interval' or "                                                                  # pref is set
     - " *[2]/*[1][contains(., '∞')] or "                                                                      # starts with infinity
     - " *[2]/*[3][contains(., '∞')] or "                                                                      # ends with infinity
@@ -267,7 +268,7 @@
 -
   name: bigop
   tag: [msub, munder]
-  match: "IsLargeOp(*[1])"
+  match: "IsLargeOp(*[1]) or contains(@data-intent-property, ':largeop:')"
   replace: 
   - intent:
       name: "large-op"    # Fix: the name in the spreadsheet needs updating/fixing
@@ -308,7 +309,7 @@
    -    "*[2][substring(., string-length(), 1)='⇀']"
    replace:
    - intent:
-      name: "chemical-equation-operator"
+      name: "chemical-arrow-operator"
       children:
       - test:
           if: "*[1][self::m:mrow]"
@@ -368,6 +369,17 @@
   replace:
   - intent:
       name: "chemical-formula-operator"
+      children:
+      - x: "text()"
+
+-
+  name: chemical-arrow-op
+  tag: [mo]
+  # FIX: this is a duplicate of the list in chemistry.rs. Probably should pull out and add to definitions.yaml
+  match: "@data-chem-equation-op and translate(., '→➔←⟶⟵⤻⇋⇌↿↾⇃⇂⥮⥯⇷⇸⤉⤈⥂⥄', '')=''"
+  replace:
+  - intent:
+      name: "chemical-arrow-operator"
       children:
       - x: "text()"
 
@@ -457,7 +469,7 @@
 -
   name: skip-super
   tag: [msup, msubsup]
-  match: "*[last()][translate(., '′″‴⁗†‡°', '')='']"
+  match: "*[last()][translate(., '′″‴⁗†‡°*', '')='']"
   replace:
   - intent:
       name: "skip-super"
@@ -494,7 +506,7 @@
 -
   name: bigop
   tag: [msubsup, munderover]
-  match: "IsLargeOp(*[1])"
+  match: "IsLargeOp(*[1]) or contains(@data-intent-property, ':largeop:')"
   replace: 
   - intent:
       name: "large-op"    # Fix: the name in the spreadsheet needs updating/fixing
@@ -566,13 +578,80 @@
 
 
 # generic mtable: treat as multiline equations of some sort
+# if a property is set, handle that first
+-
+  name: mtable-matrix-property
+  tag: mtable
+  match: "contains(@data-intent-property, ':matrix:')"
+  replace:
+  - intent:
+      name: "matrix"
+      children:
+      - x: "*"
+
+-
+  name: mtable-determinant-property
+  tag: mtable
+  match: "contains(@data-intent-property, ':determinant:')"
+  replace:
+  - intent:
+      name: "determinant"
+      children:
+      - x: "*"
+      
+-
+  name: mtable-cases-property
+  tag: mtable
+  match: "contains(@data-intent-property, ':cases:')"
+  replace:
+  - intent:
+      name: "cases"
+      children:
+      - x: "*"
+
+-
+  name: mtable-equations-property
+  tag: mtable
+  match: "contains(@data-intent-property, ':equations:')"
+  replace:
+  - intent:
+      name: "equations"
+      children:
+      - x: "*"
+
+-
+  name: mtable-lines-property
+  tag: mtable
+  match: "contains(@data-intent-property, ':lines:')"
+  replace:
+  - intent:
+      name: "lines"
+      children:
+      - x: "*"
+
+
+# -
+#   name: mtable-property-is-set
+#   tag: mtable
+#   variables: [MTableProperty: "IfThenElse(contains(DEBUG(@data-intent-property), ':matrix:'), 'matrix',
+#                                IfThenElse(contains(@data-intent-property, ':determinant:'), 'determinant',
+#                                IfThenElse(contains(@data-intent-property, ':cases:'), 'cases',
+#                                IfThenElse(contains(@data-intent-property, ':equations:'), 'equations',
+#                                IfThenElse(contains(@data-intent-property, ':lines:'), 'lines','')))))"]
+#   match: "DEBUG($MTableProperty) !=''"
+#   replace:
+#   - intent:
+#       name: "$MTableProperty"    # doesn't work -- "name:" is not an xpath expr
+#       children:
+#       - x: "*"
+
 -
   name: cases
   tag: mrow
   match: "count(*)=2 and *[1][text()='{'] and *[2][self::m:mtable]"
   replace:
   - intent:
-      name: "piecewise"
+      name: "cases"
       children:
       - x: "*[2]/*"
 

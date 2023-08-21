@@ -21,6 +21,7 @@
  - "<": [t: "⠈⠣"]               # 0x003C (Less than)
  - "≤": [t: "⠸⠈⠣"]              # 0x2264 (Less than or equal to)
  - ">": [t: "⠈⠜"]               # 0x003E (Greater than)
+ - "≣": [t: "⠸⠠⠤"]              # 0x2263
  - "≥": [t: "⠸⠈⠜"]              # 0x2265 (Greater than or equal to)
  - "≪": [t: "⠨⠈⠣"]              # 0x226A (Much less than)
  - "≫": [t: "⠨⠈⠜"]              # 0x226B (Much greater than)
@@ -30,10 +31,11 @@
  - "≱": [t: "⠸⠈⠜⠈⠱"]            # 0x2271 (Neither greater than nor equal to)
  - "∝": [t: "⠸⠐⠶"]              # 0x221D (Proportional to)
  - "≃": [t: "⠸⠔"]               # 0x2243 (Approximately equal to (tilde over horizontal line))
- - "≅": [t: "⠸⠔"]               # 0x2245 (Approximately equal to (tilde over equals sign))
+ - "≅": [t: "⠐⠸⠔"]               # 0x2245 (Approximately equal to (tilde over equals sign))
  - "≈": [t: "⠘⠔"]               # 0x2248 (Approximately equal (tilde over tilde))
  - "≏": [t: "⠘⠐⠶"]              # 0x224F (Equals with bump in top bar (difference between))
  - "≑": [t: "⠨⠐⠶"]              # 0x2251 (Geometrically equal to (equals dotted above and below))
+ - "≟": [t: "𝟙⠦⠻⠐⠶"]           # 0x225F (Questioned equal to)
  - "≡": [t: "⠸⠿"]               # 0x2261 (Equivalent to (three horizontal lines))
  - "≢": [t: "⠸⠿⠈⠱"]             # 0x2262 (Not identical to)
  - "∈": [t: "⠘⠑"]               # 0x2208 (Element of (member of))
@@ -50,12 +52,13 @@
  - "⊳": [t: "⠈⠸⠜"]             # 0x22B3 (Contains as normal subgroup)
  - "⊴": [t: "⠸⠸⠣"]             # 0x22B4 (Normal subgroup of or equal)
  - "⊵": [t: "⠸⠸⠜"]             # 0x22B5 (Contains as normal subgroup or equal)
+ - "⊻": [t: "⠈⠖⠠⠱."]           # 0x22bb (Xor)
  - "⋬": [t: "⠨⠸⠣"]             # 0x22EC (not normal subgroup) -- this isn't the same as what is in GTM 10, but that similar has no Unicode equiv
  - "⋭": [t: "⠨⠸⠣"]             # 0x22ED (does not contain as normal subgroup) -- this isn't the same as what is in GTM 10, but that similar has no Unicode equiv
  - "⊢": [t: "⠸⠒"]               # 0x22a2 (Right tack)
  - "⊣": [t: "⠈⠸⠒"]              # 0x22a3 (Left tack)
  - "−": [t: "⠐⠤"]               # 0x2212 (Minus sign)
- - "·": [t: "⠐⠲"]               # 0x00D7 (Multiplication dot (times))
+ - "·": [t: "⠐⠲"]               # 0x00B7 (Multiplication dot (times))
  - "×": [t: "⠐⠦"]               # 0x00D7 (Multiplication sign (times))
  - "÷": [t: "⠐⠌"]               # 0x00F7 (Division sign (divided by))
  - "±": [t: "⠸⠖"]               # 0x00B1 (Plus or minus)
@@ -85,7 +88,7 @@
         else: [t: "⠸⠳"]          # absolute value, others???
  - "!": [t: "c⠖"]                # 0x21 (Exclamation (factorial))
  - "#": [t: "⠸⠹"]               # 0x23 (Number sign (hash))
- - "%": [t: "⠴"]                # 0x25 (Percent sign)
+ - "%": [t: "⠨⠴"]               # 0x25 (Percent sign)
  - "&": [t: "⠈⠯"]               # 0x26 (Ampersand)
  - "*": [t: "⠐⠔"]               # 0x002A (Asterisk)
  - "/": [t: "⠸⠌"]               # 0x002F (Solidus (slash))
@@ -97,6 +100,7 @@
  - "_": [t: "⠨⠤"]               # 0x005F (Low line (underscore))
  - "~": [t: "⠈⠔"]               # 0x007E (Tilde (swung dash))
  - "¢": [t: "⠈⠉"]               # 0x00A2 (Cents sign)
+ - "‖": [t: "⠸⠳"]               # 0x2016
  - "€": [t: "⠈⠑"]               # 0x20AC (Euro sign)
  - "₣": [t: "⠈⠋"]               # 0x20A3 (French franc sign)
  - "£": [t: "⠈⠇"]               # 0x00A3 (Pound sign)
@@ -130,8 +134,8 @@
  - "∮": [t: "⠈⠮"]               # 0x222E (Contour integral (closed line integral))
  - "∴": [t: "1⠠⠡"]               # 0x2234 (Therefore)
  - "∵": [t: "⠈⠌"]               # 0x2235 (Because (since))
- - "∶": [t: "1⠒"]               # 0x2236 (Ratio)
- - "∷": [t: "1⠒⠒"]              # 0x2237 (Proportion)
+ - "∶": [t: "⠒"]               # 0x2236 (Ratio)
+ - "∷": [t: "⠒⠒"]              # 0x2237 (Proportion)
  - "∣": [t: "⠸⠳"]               # 0x2223 (Divides)
  - "∤": [t: "⠸⠳⠈⠱"]             # 0x2224 (Does not divide)
  - "∥": [t: "⠼⠇"]               # 0x2225 (Parallel)
@@ -143,6 +147,8 @@
  - "⊨": [t: "⠘⠸⠒"]              # 0x22A8 (TRUE (is valid))
  - "⊬": [t: "⠸⠒⠈⠱"]             # 0x22AC (Does not prove)
  - "⊭": [t: "⠘⠸⠒⠈⠱"]            # 0x22AD (Not TRUE)
+ - "⫅": [t: "⠘⠣⠰⠻⠐⠶"]         # 0x2AC5 (Subset above equals)
+ - "⫆": [t: "⠘⠜⠰⠻⠐⠶"]         # 0x2AC6 (Superset above equals)
  - "⫤": [t: "⠨⠸⠒"]              # 0x2AE4 (Vertical bar double left turnstile)
  - "✓": [t: "⠈⠩"]               # 0x2713 (Check mark (tick))
  - "⦵": [t: "⠨⠚"]               # 0x29B5 (Plimsoll sign (standard state))
@@ -228,7 +234,7 @@
  - "⋇": [t: "1⠌⠯⠦"]             # 0x22C7 (Division times)
  - "⊩": [t: "⠸⠳⠿⠸⠒"]            # 0x22A9 (Forces)
  - "˙": [t: "1⠲"]               # 0x02D9 ( Dot Above)
- - "¨": [t: "1⠲⠲"]              # 0x00A8 ( Double Dot Above)
+ - "¨": [t: "1⠲⠲"]              # 0x00A8 ( Diaeresis/Double Dot Above )
  - "©": [t: "⠘⠉"]               # 0xa9 (Copyright)
 
 
@@ -264,24 +270,12 @@
         then: [t: "N⠲"]
         else: [t: "."]
  - ":":                         # 0x003A (Colon)
-        # Sometimes a colon is meant to be a ratio/mathord and sometimes a map/punct.
-        # The latter has a space after it.
-        # If in an mrow, guess it is infix and checks the operator. This is pretty weak!
-        # Field extensions "[K:F]" and trilinear coordinates "a:b:c" don't want extra space
-        # Time doesn't want an extra space -- the am/pm get wrapped in an mrow with the minutes after the colon
+        # We can't normally tell spacing, but it *should* have a space in function mapping and set builder notation if the author used appropriate notation
+        # The canonicalization code makes this guess and adds "data-space-after"
     - test:
-        if:
-        - "IsBracketed(ancestor::*[2], '[', ']') or "       # field extension
-        - "preceding-sibling::*[2][text()=':'] or following-sibling::*[2][text()=':'] or"  # trilinear form
-          # ratios tend to have similar left and right sides
-        - "name(preceding-sibling::*[1]) = name(following-sibling::*[1]) or"
-          # am/pm test
-        - "(name(preceding-sibling::*[1]) = 'mn' and "
-        - "  following-sibling::*[1][self::m:mrow and count(*)=3 and *[1][self::m:mn] and "
-        - "     *[3][translate(., 'APM\u00A0', 'apm') = 'am' or translate(., 'APM\u00A0', 'apm') = 'pm']"
-        - " ])"
-        then: [t: "1⠒"]
-        else: [t: "1⠒W"]
+        if: "@data-space-after or (../self::m:mrow and ancestor::*[2][IsBracketed(., '{', '}')]) or following-sibling::*[1]/*[2][IsInDefinition(., 'Arrows')]" # "Arrows" is a bit broad...
+        then: [t: "1⠒W"]
+        else: [t: "1⠒"]
 
  - "-":                        # 0x2d (Minus sign or hyphen)
      - test:
@@ -433,7 +427,7 @@
  - "δ": [t: "GL⠙"]              # 0x3b4 
  - "ε": [t: "GL⠑"]              # 0x3b5 
  - "ζ": [t: "GL⠵"]              # 0x3b6 
- - "η": [t: "GL⠱ "]             # 0x3b7 
+ - "η": [t: "GL⠱"]             # 0x3b7 
  - "θ": [t: "GL⠹"]              # 0x3b8 
  - "ι": [t: "GL⠊"]              # 0x3b9 
  - "κ": [t: "GL⠅"]              # 0x3ba 
@@ -445,12 +439,13 @@
  - "π": [t: "GL⠏"]              # 0x3c0 
  - "ρ": [t: "GL⠗"]              # 0x3c1 
  - "ς": [t: "GL⠎"]              # 0x3c2 
- - "σ": [t: "GL⠞"]              # 0x3c3 
- - "τ": [t: "GL⠥"]              # 0x3c4 
- - "υ": [t: "GL⠋"]              # 0x3c5 
- - "φ": [t: "GL⠯"]              # 0x3c6 
- - "χ": [t: "GL⠽"]              # 0x3c7 
- - "ψ": [t: "GL⠺"]              # 0x3c8 
+ - "σ": [t: "GL⠎"]              # 0x3c3 
+ - "τ": [t: "GL⠞"]              # 0x3c4 
+ - "υ": [t: "GL⠥"]              # 0x3c5 
+ - "φ": [t: "GL⠋"]              # 0x3c6 
+ - "χ": [t: "GL⠯"]              # 0x3c7 
+ - "ψ": [t: "GL⠽"]              # 0x3c8 
+ - "ω": [t: "GL⠺"]              # 0x3c9 
 
  - "Α": [t: "CGL⠁"]             # 0x391 
  - "Β": [t: "CGL⠃"]             # 0x392 
@@ -470,15 +465,16 @@
  - "Π": [t: "CGL⠏"]             # 0x3a0 
  - "Ρ": [t: "CGL⠗"]             # 0x3a1 
  - "΢": [t: "CGL⠎"]             # 0x3a2 
- - "Σ": [t: "CGL⠞"]             # 0x3a3 
- - "Τ": [t: "CGL⠥"]             # 0x3a4 
- - "Υ": [t: "CGL⠋"]             # 0x3a5 
- - "Φ": [t: "CGL⠯"]             # 0x3a6 
- - "Χ": [t: "CGL⠽"]             # 0x3a7 
- - "Ψ": [t: "CGL⠺"]             # 0x3a8 
+ - "Σ": [t: "CGL⠎"]             # 0x3a3 
+ - "Τ": [t: "CGL⠞"]             # 0x3a4 
+ - "Υ": [t: "CGL⠥"]             # 0x3a5 
+ - "Φ": [t: "CGL⠋"]             # 0x3a6 
+ - "Χ": [t: "CGL⠯"]             # 0x3a7 
+ - "Ψ": [t: "CGL⠽"]             # 0x3a8 
+ - "Ω": [t: "CGL⠺"]             # 0x3a9
 
  - "µ": [t: "GL⠍"]              # 0x00B5 (Micro (Greek mu))
- - "Ω": [t: "CGL⠍"]             # 0x2126 (Ohm sign (capital Greek omega))
+ - "Ω": [t: "CGL⠺"]             # 0x2126 (Ohm sign (capital Greek omega))
  - "∆": [t: "CGL⠙"]             # 0x2206 (Increment (capital Greek delta))
  - "∏": [t: "CGL⠏"]             # 0x220F (Product (capital Greek pi))
  - "∑": [t: "CGL⠎"]             # 0x2211 (Sum (capital Greek sigma))
