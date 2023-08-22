@@ -235,6 +235,15 @@ pub extern "C" fn GetNavigationMathMLId() -> *const c_char {
     }
 }
 
+#[no_mangle]
+/// Return the MathML associated with the current (navigation) node.
+pub extern "C" fn GetNavigationMathML() -> *const c_char {
+    return match get_navigation_mathml() {
+        Err(e) => set_string_error(Err(e)),
+        Ok((nav_mathml, _)) => set_string_error( Ok(nav_mathml) ),
+    }
+}
+
 /// Return the MathML associated with the current (navigation) node.
 pub extern "C" fn GetNavigationMathMLIdOffset() -> i32 {
     return match get_navigation_mathml_id() {
@@ -243,13 +252,12 @@ pub extern "C" fn GetNavigationMathMLIdOffset() -> i32 {
     }
 }
 
-
 #[no_mangle]
 /// Return the MathML associated with the current (navigation) node.
-pub extern "C" fn GetNavigationMathML() -> *const c_char {
+pub extern "C" fn GetNavigationMathMLOffset() -> i32 {
     return match get_navigation_mathml() {
-        Err(e) => set_string_error(Err(e)),
-        Ok((nav_mathml, _)) => set_string_error( Ok(nav_mathml) ),
+        Err(e) => set_int_error(Err(e)),
+        Ok((_, nav_offset)) => set_int_error( Ok(nav_offset) ),
     }
 }
 
