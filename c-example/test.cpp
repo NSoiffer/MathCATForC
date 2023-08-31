@@ -101,7 +101,14 @@ int main(int argc, char *argv[]) {
 
     singleTest(mathml, true);   // shows results and removes initialization times from the loop
 
-    printf("Nav Offset=%d", GetNavigationMathMLIdOffset());
+    // test navigation
+    const char* nav_speech = DoNavigateCommand("ZoomIn");
+    printf("Nav speech = '%s';  Offset=%d\n", nav_speech, GetNavigationMathMLOffset());
+    FreeMathCATString((char*)nav_speech);
+    NavigationLocation nav_location = GetNavigationLocation();
+    printf("Nav (id, offset)=(%s, %d)\n", nav_location.id, nav_location.offset);
+    FreeMathCATString((char*)nav_location.id);
+
 
     if (argc > 1) {    // argv[0] is command
         printf("Looping %d times...\n", atoi(argv[1]));

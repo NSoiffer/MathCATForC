@@ -261,6 +261,30 @@ pub extern "C" fn GetNavigationMathMLOffset() -> i32 {
     }
 }
 
+#[repr(C)]
+pub struct NavigationLocation {
+    id: *const c_char,
+    offset: i32,
+}
+#[no_mangle]
+/// Return the MathML associated with the current (navigation) node.
+pub extern "C" fn GetNavigationLocation() -> NavigationLocation {
+    return match get_navigation_mathml_id() {
+        Err(e) => {
+            change_error_string_value(errors_to_string(&e));
+            NavigationLocation {
+                id: CString::new("").unwrap().into_raw(),
+                offset: 0_i32,
+            }
+        },
+        Ok((nav_id, nav_offset)) => {
+            NavigationLocation {
+                id: CString::new(nav_id).expect(ILLEGAL_STRING).into_raw(),
+                offset: nav_offset as i32,
+            }
+        },
+    }
+}
 
 // #[cfg(test)]
 // mod py_tests {

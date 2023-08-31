@@ -4,6 +4,11 @@
 #include <ostream>
 #include <new>
 
+struct NavigationLocation {
+  const char *id;
+  int32_t offset;
+};
+
 extern "C" {
 
 /// Returns the error set by the last call.
@@ -92,5 +97,8 @@ const char *GetNavigationMathML();
 
 /// Return the MathML associated with the current (navigation) node.
 int32_t GetNavigationMathMLOffset();
+
+/// Return the MathML associated with the current (navigation) node.
+NavigationLocation GetNavigationLocation();
 
 } // extern "C"
