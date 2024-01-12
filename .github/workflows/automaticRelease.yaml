@@ -28,7 +28,7 @@ jobs:
       uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
-        filename: '..libmathcat64.zip'
+        filename: '../libmathcat64.zip'
         directory: src
         path: '*.rs'
     - name: Automatic release
