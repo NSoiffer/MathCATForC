@@ -17,6 +17,15 @@ jobs:
       uses: actions/checkout@v3
     - name: Build 64 bit version
       run:  cargo build --target x86_64-pc-windows-msvc --release
+    - name: Build 32 bit version
+      run:  cargo build --target i686-pc-windows-msvc --release
+    - name: create libmathcat32
+      uses: thedoctor0/zip-release@0.7.5
+      with:
+        type: 'zip'
+        filename: '../../../libmathcat32.zip'
+        directory: target/i686-pc-windows-msvc/release
+        path: libmathcat_c*
     - name: create libmathcat64
       uses: thedoctor0/zip-release@0.7.5
       with:
