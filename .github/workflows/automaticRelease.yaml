@@ -15,15 +15,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-    - name: Build 32 bit version
-      run:  cargo build --target i686-pc-windows-msvc --release
-    - name: Copy MathCAT.pyd file and fix wx file
-      run: |
-        cp target/i686-pc-windows-msvc/release/libmathcat_py.dll add
-        # zip up libmathcat*
     - name: Build 64 bit version
       run:  cargo build --target x86_64-pc-windows-msvc --release
-    - name: Copy MathCAT.pyd file and fix wx file
-      run: |
-        cp target/x86_64-pc-windows-msvc/release/libmathcat_py.dll addon/globalPlugins/MathCAT/libmathcat.pyd
-        # zip up libmathcat*
+    - name: create libmathcat64
+      run: zip libmathcat64.zip target/x86_64-pc-windows-msvc/release/libmathcat_c.*
