@@ -21,7 +21,7 @@ jobs:
       uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
-        filename: '../../libmathcat64.zip'
+        filename: '../../../libmathcat64.zip'
         directory: target/x86_64-pc-windows-msvc/release
         path: libmathcat_c*
     - name: Automatic release
@@ -33,3 +33,4 @@ jobs:
         title: Development Build
         files: |
           libmathcat*.zip
+          c-example/mathcat.h
