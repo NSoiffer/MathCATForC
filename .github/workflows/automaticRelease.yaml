@@ -18,4 +18,18 @@ jobs:
     - name: Build 64 bit version
       run:  cargo build --target x86_64-pc-windows-msvc --release
     - name: create libmathcat64
-      run: zip libmathcat64.zip target/x86_64-pc-windows-msvc/release/libmathcat_c.*
+      uses: thedoctor0/zip-release@0.7.5
+      with:
+        type: 'zip'
+        filename: 'libmathcat64.zip'
+        path: target/x86_64-pc-windows-msvc/release
+        exclusions: 'build deps examples incremental'
+    - name: Automatic release
+      uses: marvinpinto/action-automatic-releases@latest
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        automatic_release_tag: latest
+        prerelease: true
+        title: Development Build
+        files: |
+          libmathcat*.zip
