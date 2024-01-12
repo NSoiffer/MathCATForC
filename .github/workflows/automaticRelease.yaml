@@ -15,8 +15,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-    - name: Build 64 bit version
-      run:  cargo build --target x86_64-pc-windows-msvc --release
+    # - name: Build 64 bit version
+    #   run:  cargo build --target x86_64-pc-windows-msvc --release
     # - name: create libmathcat64
     #   uses: thedoctor0/zip-release@0.7.5
     #   with:
