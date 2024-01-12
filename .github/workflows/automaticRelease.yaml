@@ -30,7 +30,7 @@ jobs:
         type: 'zip'
         filename: '..libmathcat64.zip'
         directory: src
-        path: *.rs
+        path: '*.rs'
     - name: Automatic release
       uses: marvinpinto/action-automatic-releases@latest
       with:
