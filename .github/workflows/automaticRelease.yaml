@@ -15,22 +15,15 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-    # - name: Build 64 bit version
-    #   run:  cargo build --target x86_64-pc-windows-msvc --release
-    # - name: create libmathcat64
-    #   uses: thedoctor0/zip-release@0.7.5
-    #   with:
-    #     type: 'zip'
-    #     filename: '../../libmathcat64.zip'
-    #     directory: target/x86_64-pc-windows-msvc/release
-    #     path: libmathcat_c*
+    - name: Build 64 bit version
+      run:  cargo build --target x86_64-pc-windows-msvc --release
     - name: create libmathcat64
       uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
-        filename: '../libmathcat64.zip'
-        directory: src
-        path: '*.rs'
+        filename: '../../libmathcat64.zip'
+        directory: target/x86_64-pc-windows-msvc/release
+        path: libmathcat_c*
     - name: Automatic release
       uses: marvinpinto/action-automatic-releases@latest
       with:
