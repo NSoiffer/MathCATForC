@@ -101,4 +101,7 @@ int32_t GetNavigationMathMLOffset();
 /// Return the MathML associated with the current (navigation) node.
 NavigationLocation GetNavigationLocation();
 
+/// Return the MathML associated with the current (navigation) node.
+NavigationLocation GetNavigationLocationFromBraillePosition(int32_t position);
+
 } // extern "C"
