@@ -28,9 +28,9 @@ jobs:
       uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
-        filename: 'Rules.zip'
-        directory: '.'
-        path: 'c-example/Rules'
+        filename: '../Rules.zip'
+        directory: 'c-example'
+        path: 'Rules'
     - name: Build 32 bit version
       run:  cargo build --target i686-pc-windows-msvc --release
     - name: create libmathcat32
