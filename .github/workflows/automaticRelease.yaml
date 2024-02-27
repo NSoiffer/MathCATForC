@@ -18,16 +18,9 @@ jobs:
     - name: Build 64 bit version
       run:  cargo build --target x86_64-pc-windows-msvc --release
     - name: "ls for debugging"
-      run: ls -l . c-example
-    - name: Build 32 bit version
-      run:  cargo build --target i686-pc-windows-msvc --release
-    - name: create libmathcat32
-      uses: thedoctor0/zip-release@0.7.5
-      with:
-        type: 'zip'
-        filename: '../../../libmathcat32.zip'
-        directory: target/i686-pc-windows-msvc/release
-        path: libmathcat_c*
+      run: ls -l c-example
+    - name: "ls for debugging (target)"
+      run: ls -l target/x86_64-pc-windows-msvc/release
     - name: create libmathcat64
       uses: thedoctor0/zip-release@0.7.5
       with:
@@ -42,6 +35,15 @@ jobs:
         filename: 'Rules.zip'
         directory: '.'
         path: 'c-example/Rules'
+    - name: Build 32 bit version
+      run:  cargo build --target i686-pc-windows-msvc --release
+    - name: create libmathcat32
+      uses: thedoctor0/zip-release@0.7.5
+      with:
+        type: 'zip'
+        filename: '../../../libmathcat32.zip'
+        directory: target/i686-pc-windows-msvc/release
+        path: libmathcat_c*
     - name: Automatic release
       uses: marvinpinto/action-automatic-releases@latest
       with:
