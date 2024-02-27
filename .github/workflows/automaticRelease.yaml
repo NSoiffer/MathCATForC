@@ -33,6 +33,13 @@ jobs:
         filename: '../../../libmathcat64.zip'
         directory: target/x86_64-pc-windows-msvc/release
         path: libmathcat_c*
+    - name: create rules.zip
+      uses: thedoctor0/zip-release@0.7.5
+      with:
+        type: 'zip'
+        filename: '../../../Rules.zip'
+        directory: target/x86_64-pc-windows-msvc/release
+        path: c-example/Rules
     - name: Automatic release
       uses: marvinpinto/action-automatic-releases@latest
       with:
