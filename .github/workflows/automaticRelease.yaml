@@ -19,6 +19,7 @@ jobs:
       run:  cargo build --target x86_64-pc-windows-msvc --release
     - name: test build
       run: |
+        cd c-example
         gcc test.cpp -o test -L../target/release/ -llibmathcat_c
         ./test.exe      
     - name: create libmathcat64
