@@ -21,11 +21,8 @@ jobs:
       run: |
         cp target/x86_64-pc-windows-msvc/release/libmathcat_c.dll c-example/
         cd c-example
-        ls -l
         gcc test.cpp -o test -L. -llibmathcat_c
-        echo "after compile"
-        ls -l
-        ./test.exe
+        test.exe
     - name: create libmathcat64
       uses: thedoctor0/zip-release@0.7.5
       with:
