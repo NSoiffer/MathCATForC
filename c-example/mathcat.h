@@ -4,9 +4,16 @@
 #include <ostream>
 #include <new>
 
+/// `NavigationLocation` is a structure used with Navigation.
+/// In many cases, the `id` is enough to uniquely identify the navigation location.
+/// However, for a number such as "123" or an identifier such as "sin", there is no `id` representing each character.
+/// An `offset` is used to uniquely identify each character. `offset` = 0 is the entire identifier, 1 is the first char, etc.
+/// For example, the "i" in `<mi id='xyz-123'>sin</mi>` has `id="xyz-123"` and `offset=1`.
+///
+/// Note: currently (2/24) offsets are not implemented in MathCAT and will always return 0. This will hopefully be supported by the end of 2024.
 struct NavigationLocation {
   const char *id;
-  int32_t offset;
+  uint32_t offset;
 };
 
 extern "C" {
@@ -21,6 +28,7 @@ const char *GetError();
 void FreeMathCATString(char *str);
 
 /// The absolute path location of the MathCAT Rules dir.
+/// Returns "Ok" or an empty string if there is an error (use GetError()).
 /// IMPORTANT: This should be the first call to MathCAT
 const char *SetRulesDir(const char *rules_dir_location);
 
@@ -90,18 +98,26 @@ const char *DoNavigateKeyPress(uintptr_t key,
 const char *DoNavigateCommand(const char *command);
 
 /// Return the MathML associated with the current (navigation) node.
-const char *GetNavigationMathMLId();
-
-/// Return the MathML associated with the current (navigation) node.
 const char *GetNavigationMathML();
 
-/// Return the MathML associated with the current (navigation) node.
-int32_t GetNavigationMathMLOffset();
+/// Return the id of the MathML associated with the current (navigation) node.
+/// Note: this is deprecated -- use GetNavigationLocation()
+const char *GetNavigationMathMLId();
 
-/// Return the MathML associated with the current (navigation) node.
+/// Return the offset from the MathML node associated with the current (navigation) node.
+/// Note: this is deprecated -- use GetNavigationLocation()
+uint32_t GetNavigationMathMLOffset();
+
+/// Set the location of the navigation node associated with the current MathML expression.
+/// Returns "Ok" or an empty string if there is an error (use GetError()).
+const char *SetNavigationLocation(NavigationLocation location);
+
+/// Return the NavigationLocation (id and offset) associated with the current (navigation) node.
+/// If there is an error, the id is set to an empty string (use GetError()).
 NavigationLocation GetNavigationLocation();
 
-/// Return the MathML associated with the current (navigation) node.
-NavigationLocation GetNavigationLocationFromBraillePosition(int32_t position);
+/// Return the NavigationLocation (id and offset) associated with braille cursor location (0-based).
+/// If there is an error, the id is set to an empty string (use GetError()).
+NavigationLocation GetNavigationLocationFromBraillePosition(uint32_t position);
 
 } // extern "C"

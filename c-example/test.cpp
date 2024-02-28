@@ -1,8 +1,10 @@
+// This is a simple test file to show the use of the interface calls and verify that they work in at least these cases.
+//
 // Compile and run this with something like
 //   gcc test.cpp -o test -L../target/release/ -llibmathcat_c
 //   LD_LIBRARY_PATH="../target/release/" ./test
 // where "../target/release" is the location of libmathcat_c.dll
-// Compiling seems a bit touchy -- sometimes I needed to copy libmathcat_c.dll to the current dir
+// On Windows, this doesn't work. Instead, I copy the library ../target/release/libmathcat_c.dll to this dir and just run "./test".
 //
 // To run
 // ./test -- prints the MathML input, the speech output (assuming no speech markup), and Nemeth braille
@@ -17,17 +19,29 @@
 
 
 // A convenient wrapper that deals with errors and memory
-void SetMathCatPreference(const char* pref, const char* value) {
+bool SetMathCatPreference(const char* pref, const char* value) {
     const char* status = SetPreference(pref, value);
     if (status == "") {
         const char* message = GetError();
         printf("Error setting %s preference to %s --ignoring... Message is: %s\n", pref, value, message);
         FreeMathCATString((char*)message);
+        return false;
     }
     FreeMathCATString((char*)status);
+    return true;
 }
 
-bool singleTest(const char* mathml, bool doPrint) {
+bool setPrefsAndMathML(const char* mathml) {
+    if (!SetMathCatPreference("Language", "en")) {
+        return false;
+    };
+    if (!SetMathCatPreference("SpeechStyle", "SimpleSpeak")) {
+        return false;
+    };
+    if (!SetMathCatPreference("TTS", "None")) {
+        return false;
+    };
+
     const char* returnedMathML = SetMathML(mathml);
     if (returnedMathML == "") {
         const char* message = GetError();
@@ -37,33 +51,107 @@ bool singleTest(const char* mathml, bool doPrint) {
 	    return false;
     }
     FreeMathCATString((char*)returnedMathML);
+    return true;
+}
 
-    SetMathCatPreference("Language", "en");
-    SetMathCatPreference("SpeechStyle", "SimpleSpeak");
-    SetMathCatPreference("TTS", "None");
+bool singleTest(const char* mathml, bool doPrint) {    
+    setPrefsAndMathML(mathml);
 
-    
     const char* speech = GetSpokenText();
+    const char* expected_speech = "m choose n times; open paren, the square root of m squared plus n end root; close paren";
     if (!*speech) {
         const char* message = GetError();
-        printf("Error in speech --ignoring... Message is: %s\n", message);
+        printf("***Error in speech --ignoring... Message is: %s\n", message);
         FreeMathCATString((char*)message);
+        return false;
+    } else if (strcmp(speech, expected_speech) != 0) {
+        printf("***Returned speech '%s' doesn't match expected speech '%s'\n", speech, expected_speech);
+        FreeMathCATString((char*)speech);
+        return false;
     } else if (doPrint) {
         printf("SimpleSpeak speech: '%s'\n", speech);
     }
     FreeMathCATString((char*)speech);
 
-    SetMathCatPreference("BrailleCode", "Nemeth");
+    if (!SetMathCatPreference("BrailleCode", "Nemeth")) {
+        return false;
+    }
 
     const char* braille = GetBraille("");
+    const char* expected_braille = "⠷⠍⠩⠝⠾⠷⠜⠍⠘⠆⠐⠬⠝⠻⠾";
     if (!*braille) {
         const char* message = GetError();
-        printf("Error in braille --ignoring... Message is: %s\n", message);
+        printf("***Error in braille --ignoring... Message is: %s\n", message);
         FreeMathCATString((char*)message);
+    } else if (strcmp(braille, expected_braille) != 0) {
+        printf("***Returned braille '%s' doesn't match expected braille '%s'\n", speech, expected_braille);
+        FreeMathCATString((char*)braille);
+        return false;
     } else if (doPrint) {
         printf("Nemeth braille: %s\n", braille);
     }
     FreeMathCATString((char*)braille);
+    return true;
+}
+
+bool navGetLocationTest(NavigationLocation location, const char* expected_id, unsigned int expected_offset, bool doPrint) {
+    if (!*location.id) {
+        const char* message = GetError();
+        printf("***Error in GetNavigationLocation... Message is: %s\n", message);
+        FreeMathCATString((char*)message);
+        return false;
+    } else if (strcmp(location.id, expected_id) != 0) {
+        printf("***GetNavigationLocation id '%s' doesn't match expected id '%s'\n", location.id, expected_id);
+        FreeMathCATString((char*)location.id);
+        return false;
+    } else if (location.offset != expected_offset) {
+        printf("***GetNavigationLocation offset '%s' doesn't match expected offset '%s'\n", location.offset, expected_offset);
+        FreeMathCATString((char*)location.id);
+        return false;
+    } else if (doPrint) {
+        printf("Location: '%s', %d\n", location.id, location.offset);
+    }
+    return true;
+}
+
+bool navTest(const char* mathml, bool doPrint) {
+    setPrefsAndMathML(mathml);
+
+    const char* nav_speech = DoNavigateCommand("ZoomIn");
+    const char* expected_speech("m over n,");
+    if (!*nav_speech) {
+        const char* message = GetError();
+        printf("***Error in navigation speech... Message is: %s\n", message);
+        FreeMathCATString((char*)message);
+        return false;
+    } else if (strcmp(nav_speech, expected_speech) != 0) {
+        printf("***Returned speech '%s' doesn't match expected speech '%s'\n", nav_speech, expected_speech);
+        FreeMathCATString((char*)nav_speech);
+        return false;
+    } else if (doPrint) {
+        printf("SimpleSpeak speech: '%s'\n", nav_speech);
+    }
+
+
+    if (!navGetLocationTest(GetNavigationLocation(), "choose", 0, doPrint)) {
+        return false;
+    }
+    if (!navGetLocationTest(GetNavigationLocationFromBraillePosition(1), "id-m", 0, doPrint)) {
+        return false;
+    }
+
+    NavigationLocation location;
+    location.id = "id-m-squared";
+    location.offset = 0;
+    if (!*SetNavigationLocation(location)) {
+        const char* message = GetError();
+        printf("***Error in setting navigation location... Message is: %s\n", message);
+        FreeMathCATString((char*)message);
+        return false;
+    }
+    if (!navGetLocationTest(GetNavigationLocation(), location.id, location.offset, doPrint)) {
+        return false;
+    }
     return true;
 }
 
@@ -81,8 +169,8 @@ void testForMemoryLeak(const char* mathml, int nLoops) {
 
 int main(int argc, char *argv[]) {
     const char* mathml = "<math>\n\
-      <mo>(</mo><mfrac linethickness='0'><mi>m</mi><mi>n</mi></mfrac><mo>)</mo>\n\
-      <mo>(</mo><msqrt><msup><mi>m</mi><mn>2</mn></msup><mo>+</mo><mi>n</mi></msqrt><mo>)</mo>\n\
+      <mo>(</mo><mfrac linethickness='0' id='choose'><mi id='id-m'>m</mi><mi>n</mi></mfrac><mo>)</mo>\n\
+      <mo>(</mo><msqrt><msup id='id-m-squared'><mi>m</mi><mn>2</mn></msup><mo>+</mo><mi>n</mi></msqrt><mo>)</mo>\n\
     </math>";
 
     const char* version = GetMathCATVersion();
@@ -99,21 +187,19 @@ int main(int argc, char *argv[]) {
     }
     FreeMathCATString((char*)rulesDirResult);
 
-    singleTest(mathml, true);   // shows results and removes initialization times from the loop
+    if (!singleTest(mathml, true)) {    // shows results and removes initialization times from the loop
+        exit(1);
+    }
 
-    // test navigation
-    const char* nav_speech = DoNavigateCommand("ZoomIn");
-    printf("Nav speech = '%s';  Offset=%d\n", nav_speech, GetNavigationMathMLOffset());
-    FreeMathCATString((char*)nav_speech);
-    NavigationLocation nav_location = GetNavigationLocation();
-    printf("Nav (id, offset)=(%s, %d)\n", nav_location.id, nav_location.offset);
-    FreeMathCATString((char*)nav_location.id);
-
+    if (!navTest(mathml, true)) {
+        exit(1);
+    }
 
     if (argc > 1) {    // argv[0] is command
         printf("Looping %d times...\n", atoi(argv[1]));
         testForMemoryLeak(mathml, atoi(argv[1])-1); // already did once
     }
     
+    printf("Success!\n");
     return EXIT_SUCCESS;
 }

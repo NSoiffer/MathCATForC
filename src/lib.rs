@@ -3,19 +3,26 @@
 //! 2. the MathML is sent over via [`SetMathML`].
 //! 3. AT calls to get the speech [`GetSpokenText`] and calls [`GetBraille`] to get the (Unicode) braille.
 //! 
+//! It is also possible to find out the current value of a preference by calling [`GetPreference`]
+//! 
 //! Navigation can be done via calls to either:
 //! * [`DoNavigateKeyPress`] (takes key events as input)
 //! * [`DoNavigateCommand`] (takes the commands the key events internally map to)
 //! Both return a string to speak.
 //! To highlight the node on is on, 'id's are used. If they weren't already present,
 //! [`SetMathML`] returns a string representing MathML that contains 'id's for any node that doesn't already
-//! have an 'id' set. You can get the current node with
-//! * [`GetNavigationMathMLId`]
-//! * [`GetNavigationMathML`] -- returns a string representing the MathML for the selected node
-//! Note: a second integer is returned. This is the offset in characters for a leaf node.
-//!   This is needed when navigating by character for multi-symbol leaf nodes such as "sin" and "1234"
+//! have an 'id' set.
+//!
+//! You can get the current node with:
+//! [GetNavigationLocation] which returns a [NavigationLocation] structure containing the `id` and the `offset`.
+//! The node can be set with [SetNavigationLocation].
 //! 
-//! It is also possible to find out what preferences are currently set by calling [`GetPreference`]
+//! The MathML associated with the current navigation Location (the entire node, not the part referenced by an `offset`) can be retrieved with:
+//! * [`GetNavigationMathML`] -- returns a string representing the MathML for the selected node
+//!
+//! The braille routing cursor can be used to set the navigation node associated with the braille displayed at that location (0-base) by calling:
+//! [GetNavigationLocationFromBraillePosition].
+//! Like [GetNavigationLocation] which returns a [NavigationLocation] structure containing the `id` and the `offset`.
 //!
 //! AT can pass key strokes to allow a user to navigate the MathML by calling [`DoNavigateKeyPress`]; the speech is returned.
 //! To get the MathML associated with the current navigation node, call [`GetNavigationMathML`].
@@ -23,9 +30,7 @@
 //! Internally, Rust returns a Result<> type. I don't know how to express this in the interface (maybe it is possible via enums?).
 //! Instead, most functions return a string. When the string is empty, that indicates an error.
 //! For functions that one doesn't normally expect a string (e.g, [`SetRulesDir`]), "Ok" is returned for consistency.
-//! In that case, call [`GetError`] and it returns a string representing the error.
-//! For the two functions that return integers ([`GetNavigationMathMLIdOffset`] and [`GetNavigationMathMLOffset`]),
-//!   a negative value indicates an error.
+//! For errors, call [`GetError`]: it returns a string representing the error.
 //! 
 //! IMPORTANT: Rust allocates all the strings and its allocator and C's allocator and not compatible.
 //!   EVERY string returned from Rust (including errors/empty strings) must be deallocated by calling FreeMathCATString().
@@ -88,12 +93,12 @@ fn set_string_error(result: Result<String, libmathcat::errors::Error>) -> *const
     return result.into_raw();
 }
 
-fn set_int_error(result: Result<usize, libmathcat::errors::Error>) -> i32 {
+fn set_int_error(result: Result<usize, libmathcat::errors::Error>) -> u32 {
     return match result {
-        Ok(answer) => answer as i32,
+        Ok(answer) => answer as u32,
         Err(e) => {
             change_error_string_value(errors_to_string(&e));
-            -1
+            0
         },
     };
 }
@@ -122,6 +127,7 @@ pub extern "C" fn FreeMathCATString(str: *mut c_char) {
 
 #[no_mangle]
 /// The absolute path location of the MathCAT Rules dir.
+/// Returns "Ok" or an empty string if there is an error (use GetError()).
 /// IMPORTANT: This should be the first call to MathCAT
 pub extern "C" fn SetRulesDir(rules_dir_location: *const c_char) -> *const c_char {
     return set_empty_error(
@@ -228,15 +234,6 @@ pub extern "C" fn DoNavigateCommand(command: *const c_char) -> *const c_char {
 
 #[no_mangle]
 /// Return the MathML associated with the current (navigation) node.
-pub extern "C" fn GetNavigationMathMLId() -> *const c_char {
-    return match get_navigation_mathml_id() {
-        Err(e) => set_string_error(Err(e)),
-        Ok((nav_id, _)) => set_string_error( Ok(nav_id) ),
-    }
-}
-
-#[no_mangle]
-/// Return the MathML associated with the current (navigation) node.
 pub extern "C" fn GetNavigationMathML() -> *const c_char {
     return match get_navigation_mathml() {
         Err(e) => set_string_error(Err(e)),
@@ -244,8 +241,19 @@ pub extern "C" fn GetNavigationMathML() -> *const c_char {
     }
 }
 
-/// Return the MathML associated with the current (navigation) node.
-pub extern "C" fn GetNavigationMathMLIdOffset() -> i32 {
+
+#[no_mangle]
+/// Return the id of the MathML associated with the current (navigation) node.
+/// Note: this is deprecated -- use GetNavigationLocation()
+pub extern "C" fn GetNavigationMathMLId() -> *const c_char {
+    return match get_navigation_mathml_id() {
+        Err(e) => set_string_error(Err(e)),
+        Ok((nav_id, _)) => set_string_error( Ok(nav_id) ),
+    }
+}
+/// Return the id of the MathML associated with the current (navigation) node.
+/// Note: this is deprecated -- use GetNavigationLocation()
+pub extern "C" fn GetNavigationMathMLIdOffset() -> u32 {
     return match get_navigation_mathml_id() {
         Err(e) => set_int_error(Err(e)),
         Ok((_, nav_offset)) => set_int_error( Ok(nav_offset) ),
@@ -253,8 +261,9 @@ pub extern "C" fn GetNavigationMathMLIdOffset() -> i32 {
 }
 
 #[no_mangle]
-/// Return the MathML associated with the current (navigation) node.
-pub extern "C" fn GetNavigationMathMLOffset() -> i32 {
+/// Return the offset from the MathML node associated with the current (navigation) node.
+/// Note: this is deprecated -- use GetNavigationLocation()
+pub extern "C" fn GetNavigationMathMLOffset() -> u32 {
     return match get_navigation_mathml() {
         Err(e) => set_int_error(Err(e)),
         Ok((_, nav_offset)) => set_int_error( Ok(nav_offset) ),
@@ -262,25 +271,64 @@ pub extern "C" fn GetNavigationMathMLOffset() -> i32 {
 }
 
 #[repr(C)]
+/// `NavigationLocation` is a structure used with Navigation.
+/// In many cases, the `id` is enough to uniquely identify the navigation location.
+/// However, for a number such as "123" or an identifier such as "sin", there is no `id` representing each character.
+/// An `offset` is used to uniquely identify each character. `offset` = 0 is the entire identifier, 1 is the first char, etc.
+/// For example, the "i" in `<mi id='xyz-123'>sin</mi>` has `id="xyz-123"` and `offset=1`.
+///
+/// Note: currently (2/24) offsets are not implemented in MathCAT and will always return 0. This will hopefully be supported by the end of 2024.
 pub struct NavigationLocation {
     id: *const c_char,
-    offset: i32,
+    offset: u32,
 }
+
 #[no_mangle]
-/// Return the MathML associated with the current (navigation) node.
+/// Set the location of the navigation node associated with the current MathML expression.
+/// Returns "Ok" or an empty string if there is an error (use GetError()).
+pub extern "C" fn SetNavigationLocation(location: NavigationLocation) -> *const c_char {
+    return set_empty_error(
+        set_navigation_node(safe_string(location.id), location.offset as usize)
+    )
+}
+
+#[no_mangle]
+/// Return the NavigationLocation (id and offset) associated with the current (navigation) node.
+/// If there is an error, the id is set to an empty string (use GetError()).
 pub extern "C" fn GetNavigationLocation() -> NavigationLocation {
     return match get_navigation_mathml_id() {
         Err(e) => {
             change_error_string_value(errors_to_string(&e));
             NavigationLocation {
                 id: CString::new("").unwrap().into_raw(),
-                offset: 0_i32,
+                offset: 0_u32,
             }
         },
         Ok((nav_id, nav_offset)) => {
             NavigationLocation {
                 id: CString::new(nav_id).expect(ILLEGAL_STRING).into_raw(),
-                offset: nav_offset as i32,
+                offset: nav_offset as u32,
+            }
+        },
+    }
+}
+
+#[no_mangle]
+/// Return the NavigationLocation (id and offset) associated with braille cursor location (0-based).
+/// If there is an error, the id is set to an empty string (use GetError()).
+pub extern "C" fn GetNavigationLocationFromBraillePosition(position: u32) -> NavigationLocation {
+    return match get_navigation_node_from_braille_position(position as usize) {
+        Err(e) => {
+            change_error_string_value(errors_to_string(&e));
+            NavigationLocation {
+                id: CString::new("").unwrap().into_raw(),
+                offset: 0_u32,
+            }
+        },
+        Ok((nav_id, nav_offset)) => {
+            NavigationLocation {
+                id: CString::new(nav_id).expect(ILLEGAL_STRING).into_raw(),
+                offset: nav_offset as u32,
             }
         },
     }
