@@ -6,11 +6,13 @@ extern crate cbindgen;
 use std::path::{PathBuf, Path};
 use zip::ZipArchive;
 use std::env;
+use cbindgen::*;
 
 fn main() {
     let c_examples_dir = PathBuf::from("c-example");
     unzip_rules(&c_examples_dir);
-    write_headers(&c_examples_dir);
+    write_headers(&c_examples_dir, "mathcat-c.h", Language::C);
+    write_headers(&c_examples_dir, "mathcat.h", Language::Cxx);
 }
 
 fn unzip_rules(location: &Path) {
@@ -27,11 +29,17 @@ fn unzip_rules(location: &Path) {
         .expect(&format!("Failed to remove directory {}", zz_dir.to_str().unwrap()));
 }
 
-fn write_headers(location: &Path) {
+fn write_headers(location: &Path, name: &str, header_style: cbindgen::Language) {
+    let config = cbindgen::Config::from_file(
+            if header_style == Language::Cxx {"cbindgen.toml"} else {"cbindgen-c.toml"}
+        ).expect("couldn't read cbindgen.toml");
     let crate_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
     let mut location = PathBuf::from(location);
-    location.push("mathcat.h");
+    location.push(name);
     cbindgen::Builder::new()
+    .with_language(header_style)
+    .with_cpp_compat(true)
+    .with_config(config)
     .with_crate(crate_dir)
     .generate()
     .expect("Unable to generate bindings")
