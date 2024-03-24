@@ -57,3 +57,4 @@ jobs:
           libmathcat*.zip
           Rules.zip
           c-example/mathcat.h
+          c-example/mathcat-c.h
