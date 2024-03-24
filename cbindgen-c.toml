@@ -1,0 +1,3 @@
+language = "C"
+line_length = 100
+documentation_style = "c++"
