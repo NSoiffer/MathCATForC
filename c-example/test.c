@@ -13,9 +13,9 @@
 //   memory used so it can indicate a memory leak.
 
 
-#include "mathcat.h"
+#include "mathcat-c.h"
 #include <stdio.h>
-#include <cstring>
+#include <string.h>
 
 
 // A convenient wrapper that deals with errors and memory

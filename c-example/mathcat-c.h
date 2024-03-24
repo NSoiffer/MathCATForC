@@ -1,8 +1,7 @@
-#include <cstdarg>
-#include <cstdint>
-#include <cstdlib>
-#include <ostream>
-#include <new>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 /// `NavigationLocation` is a structure used with Navigation.
 /// In many cases, the `id` is enough to uniquely identify the navigation location.
@@ -11,17 +10,15 @@
 /// For example, the "i" in `<mi id='xyz-123'>sin</mi>` has `id="xyz-123"` and `offset=1`.
 ///
 /// Note: currently (2/24) offsets are not implemented in MathCAT and will always return 0. This will hopefully be supported by the end of 2024.
-struct NavigationLocation {
+typedef struct NavigationLocation {
   const char *id;
   uint32_t offset;
-};
-
-extern "C" {
+} NavigationLocation;
 
 /// Returns the error set by the last call.
 /// Calling GetError() will clear the current error.
 /// If there is no error, "" (an empty string) will be returned.
-const char *GetError();
+const char *GetError(void);
 
 /// IMPORTANT: For every MathCAT function that returns a string, it must be free'd with this call
 /// If this is not called, the memory will be leaked.
@@ -41,11 +38,11 @@ const char *SetMathML(const char *mathml_str);
 
 /// Get the spoken text of the MathML that was set.
 /// The speech takes into account any AT or user preferences.
-const char *GetMathCATVersion();
+const char *GetMathCATVersion(void);
 
 /// Get the spoken text of the MathML that was set.
 /// The speech takes into account any AT or user preferences.
-const char *GetSpokenText();
+const char *GetSpokenText(void);
 
 /// Set an API preference. The preference name should be a known preference name.
 /// The value should either be a string or a number (depending upon the preference being set)
@@ -72,7 +69,7 @@ const char *GetBraille(const char *nav_node_id);
 /// The braille returned depends upon the preference for the `code` preference (default `Nemeth`).
 ///
 /// The returned braille is brailled as if the current navigation focus is the entire expression to be brailled.
-const char *GetNavigationBraille();
+const char *GetNavigationBraille(void);
 
 /// Given a key code along with the modifier keys, the current node is moved accordingly (or value reported in some cases).
 ///
@@ -104,26 +101,24 @@ const char *DoNavigateKeyPress(uintptr_t key,
 const char *DoNavigateCommand(const char *command);
 
 /// Return the MathML associated with the current (navigation) node.
-const char *GetNavigationMathML();
+const char *GetNavigationMathML(void);
 
 /// Return the id of the MathML associated with the current (navigation) node.
 /// Note: this is deprecated -- use GetNavigationLocation()
-const char *GetNavigationMathMLId();
+const char *GetNavigationMathMLId(void);
 
 /// Return the offset from the MathML node associated with the current (navigation) node.
 /// Note: this is deprecated -- use GetNavigationLocation()
-uint32_t GetNavigationMathMLOffset();
+uint32_t GetNavigationMathMLOffset(void);
 
 /// Set the location of the navigation node associated with the current MathML expression.
 /// Returns "Ok" or an empty string if there is an error (use GetError()).
-const char *SetNavigationLocation(NavigationLocation location);
+const char *SetNavigationLocation(struct NavigationLocation location);
 
 /// Return the NavigationLocation (id and offset) associated with the current (navigation) node.
 /// If there is an error, the id is set to an empty string (use GetError()).
-NavigationLocation GetNavigationLocation();
+struct NavigationLocation GetNavigationLocation(void);
 
 /// Return the NavigationLocation (id and offset) associated with braille cursor location (0-based).
 /// If there is an error, the id is set to an empty string (use GetError()).
-NavigationLocation GetNavigationLocationFromBraillePosition(uint32_t position);
-
-} // extern "C"
+struct NavigationLocation GetNavigationLocationFromBraillePosition(uint32_t position);
