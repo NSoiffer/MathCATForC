@@ -192,13 +192,21 @@ pub extern "C" fn GetPreference(name: *const c_char) -> *const c_char {
 }
 
 #[no_mangle]
-#[allow(unused_variables)]
-/// Get the braille associated with the MathML node with a given id (MathML set by `SetMathML`]).
-/// An empty string can be used to return the braille associated with the entire expression.
+/// Get the braille associated with the MathML that was set by [`set_mathml`].
+/// The braille returned depends upon the preference for the `code` preference (default `Nemeth`).
 /// 
-/// The braille returned depends upon the preference for braille output.
+/// If 'nav_node_id' is a non-empty string, the node is highlighted based on the value of `BrailleNavHighlight` (default: `EndPoints`)
 pub extern "C" fn GetBraille(nav_node_id: *const c_char) -> *const c_char {
     return set_string_error( get_braille(safe_string(nav_node_id)) );
+}
+
+#[no_mangle]
+/// Get the braille associated with the current navigation focus of the MathML that was set by [`set_mathml`].
+/// The braille returned depends upon the preference for the `code` preference (default `Nemeth`).
+/// 
+/// The returned braille is brailled as if the current navigation focus is the entire expression to be brailled.
+pub extern "C" fn GetNavigationBraille() -> *const c_char {
+    return set_string_error( get_navigation_braille() );
 }
 
 #[no_mangle]
