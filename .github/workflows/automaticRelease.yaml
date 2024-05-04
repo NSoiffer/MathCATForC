@@ -46,6 +46,21 @@ jobs:
         filename: '../../../libmathcat32.zip'
         directory: target/i686-pc-windows-msvc/release
         path: libmathcat_c*
+    - name: Build ARM 64 bit version
+      run:  cargo build --target aarch64-pc-windows-msvc --release
+    - name: test build
+      run: |
+        cp target/aarch64-pc-windows-msvc/release/libmathcat_c.dll c-example/
+        cd c-example
+        gcc test.cpp -o test -L. -llibmathcat_c
+        ./test.exe
+    - name: create arm libmathcat64
+      uses: thedoctor0/zip-release@0.7.5
+      with:
+        type: 'zip'
+        filename: '../../../libmathcat-arm64.zip'
+        directory: aarch64-pc-windows-msvc/release
+        path: libmathcat_c*
     - name: Automatic release
       uses: marvinpinto/action-automatic-releases@latest
       with:
