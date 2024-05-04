@@ -15,6 +15,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+
     - name: Build 64 bit version
       run:  cargo build --target x86_64-pc-windows-msvc --release
     - name: test build
@@ -37,6 +38,7 @@ jobs:
         filename: '../Rules.zip'
         directory: 'c-example'
         path: 'Rules'
+
     - name: Build 32 bit version
       run:  cargo build --target i686-pc-windows-msvc --release
     - name: create libmathcat32
@@ -46,8 +48,11 @@ jobs:
         filename: '../../../libmathcat32.zip'
         directory: target/i686-pc-windows-msvc/release
         path: libmathcat_c*
+
     - name: Build ARM 64 bit version
-      run:  cargo build --target aarch64-pc-windows-msvc --release
+      run:  |
+        rustup target add aarch64-pc-windows-msvc
+        cargo build --target aarch64-pc-windows-msvc --release
     - name: test build
       run: |
         cp target/aarch64-pc-windows-msvc/release/libmathcat_c.dll c-example/
