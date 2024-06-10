@@ -21,12 +21,6 @@ fn unzip_rules(location: &Path) {
 
     let mut zip_archive = ZipArchive::new(archive).unwrap();
     zip_archive.extract(location).expect("Zip extraction failed");
-
-    // the test dir 'zz' doesn't need to be part of the addon
-    let mut zz_dir = PathBuf::from(location);
-    zz_dir.push("Rules/Languages/zz");
-    std::fs::remove_dir_all(&zz_dir)
-        .expect(&format!("Failed to remove directory {}", zz_dir.to_str().unwrap()));
 }
 
 fn write_headers(location: &Path, name: &str, header_style: cbindgen::Language) {
