@@ -21,7 +21,7 @@ crate-type = ["cdylib"]      # Creates dynamic lib
 [build-dependencies]
 zip = { version = "2.1", default-features = false, features = ["bzip2"] }
 cbindgen = "0.24"
-mathcat = {version = "0.6.0", features = ["include-zip"]}
+# mathcat = {version = "0.6.0", features = ["include-zip"]}
 # for testing MathCAT without having to publish a new version (change two occurences)
 # mathcat = {path = "../MathCAT/", features = ["include-zip"]}   # for building, we want the zip files so we can include them separately
 
