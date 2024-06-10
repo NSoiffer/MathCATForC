@@ -55,7 +55,10 @@ bool setPrefsAndMathML(const char* mathml) {
 }
 
 bool singleTest(const char* mathml, bool doPrint) {    
-    setPrefsAndMathML(mathml);
+    if (!setPrefsAndMathML(mathml)) {
+        printf("***Error in setting prefs\n");
+        return false;
+    }
 
     const char* speech = GetSpokenText();
     const char* expected_speech = "m choose n times; open paren, the square root of m squared plus n end root; close paren";

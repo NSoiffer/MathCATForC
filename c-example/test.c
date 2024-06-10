@@ -1,7 +1,7 @@
 // This is a simple test file to show the use of the interface calls and verify that they work in at least these cases.
 //
 // Compile and run this with something like
-//   gcc test.cpp -o test -L../target/release/ -llibmathcat_c
+//   gcc test.c -o test -L../target/release/ -llibmathcat_c
 //   LD_LIBRARY_PATH="../target/release/" ./test
 // where "../target/release" is the location of libmathcat_c.dll
 // On Windows, this doesn't work. Instead, I copy the library ../target/release/libmathcat_c.dll to this dir and just run "./test".
@@ -55,7 +55,10 @@ bool setPrefsAndMathML(const char* mathml) {
 }
 
 bool singleTest(const char* mathml, bool doPrint) {    
-    setPrefsAndMathML(mathml);
+    if (!setPrefsAndMathML(mathml)) {
+        printf("***Error in setting prefs\n");
+        return false;
+    }
 
     const char* speech = GetSpokenText();
     const char* expected_speech = "m choose n times; open paren, the square root of m squared plus n end root; close paren";
