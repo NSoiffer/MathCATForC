@@ -1,6 +1,6 @@
 [package]
 name = "mathcat_c"
-version = "0.5.10"
+version = "0.6.0"
 authors = ["Neil Soiffer <soiffer@alum.mit.edu>"]
 edition = "2021"
 license = "MIT"
