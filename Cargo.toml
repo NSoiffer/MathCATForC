@@ -5,13 +5,13 @@ authors = ["Neil Soiffer <soiffer@alum.mit.edu>"]
 edition = "2021"
 license = "MIT"
 description = "C/C++ interface for MathCAT (for MathCAT info, see crates.io or nsoiffer.github.io/MathCAT)"
-
+resolver = "2"    # allows different build dependency features
 
 [dependencies.mathcat]
 version = "0.6.0"
 # for testing MathCAT without having to publish a new version (change two occurences)
 # path = "../MathCAT/"
-features = ["include-zip"]   # for building, we want the zip files so we can include them separately
+# features = ["include-zip"]   # for building, we want the zip files so we can include them separately
 
 [lib]
 name = "libmathcat_c"
@@ -21,9 +21,9 @@ crate-type = ["cdylib"]      # Creates dynamic lib
 [build-dependencies]
 zip = { version = "2.1", default-features = false, features = ["bzip2"] }
 cbindgen = "0.24"
-mathcat = {version = "0.6.0", features = ["include-zip"]}
+mathcat = { version = "0.6.0", features = ["include-zip"]}     # for building, we want the zip files so we can include them separately
 # for testing MathCAT without having to publish a new version (change two occurences)
-# mathcat = {path = "../MathCAT/", features = ["include-zip"]}   # for building, we want the zip files so we can include them separately
+# mathcat = {path = "../MathCAT/", features = ["include-zip"]} 
 
 [profile.release]
 debug = true
