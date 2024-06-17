@@ -74,3 +74,5 @@ jobs:
           Rules.zip
           c-example/mathcat.h
           c-example/mathcat-c.h
+          c-example/test.cpp
+          c-example/test.c
