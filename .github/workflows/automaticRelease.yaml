@@ -9,7 +9,7 @@ on:
   #   - cron:  '0 0 * * 6'
 
 jobs:
-  zip-rules:  
+  rules-headers-tests:  
     name: zip up the rules directory
     runs-on: ubuntu-latest
     steps:
@@ -17,7 +17,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Build Rust Library 
         run: |
-          cargo build --target x86_64-unknown-linux-gnu   # doesn't need a release build since all that we want is the Rules dir
+          # doesn't need a release build since all that we want is the Rules dir and the .h files
+          cargo build --target x86_64-unknown-linux-gnu
       - name: create rules.zip
         uses: thedoctor0/zip-release@0.7.5
         with:
@@ -35,10 +36,11 @@ jobs:
       - name: Remove Rules dir in prep for uploading test and .h files
         run: |
           rm -r Example/Rules
+          ls -l
       - name: Upload Example Dir (.h files, test files)
         uses: actions/upload-artifact@v4
         with:
-          name: Example
+          name: headers-and-tests
           path: Example
           compression-level: 0
           retention-days: 1
@@ -52,7 +54,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Build 32 bit version
         run:  cargo build --target i686-pc-windows-msvc --release
-      # HOW DO GET A 32 BIT GCC TO RUN? 
+      # HOW DO I GET A 32 BIT GCC TO RUN? 
       - name: Setup Example dir and test build
         run: |
           cp target/i686-pc-windows-msvc/release/libmathcat_c.dll Example/
@@ -118,7 +120,7 @@ jobs:
         run: |
           rustup target add aarch64-pc-windows-msvc
           cargo build --target aarch64-pc-windows-msvc --release
-      # HOW DO GET A ARM GCC TO RUN? 
+      # HOW DO I GET A ARM GCC TO RUN? 
       - name: Setup Example dir and test build
         run: |
           cp target/aarch64-pc-windows-msvc/release/libmathcat_c.dll Example/
@@ -145,7 +147,7 @@ jobs:
   pre-release:  
     name: Pre Release
     continue-on-error: false
-    needs: [zip-rules, rust-32-win, rust-64-win, rust-64-arm-win]
+    needs: [rules-headers-tests, rust-32-win, rust-64-win, rust-64-arm-win]
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -156,10 +158,10 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: Rules.zip
-    - name: Download Example Dir
+    - name: Download 2 header files and 2 test files
       uses: actions/download-artifact@v4
       with:
-        name: Example
+        name: headers-and-tests
     - name: Download 32 bit build
       uses: actions/download-artifact@v4
       with:
