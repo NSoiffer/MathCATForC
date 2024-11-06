@@ -9,10 +9,10 @@ use std::env;
 use cbindgen::*;
 
 fn main() {
-    let c_examples_dir = PathBuf::from("Example");
-    unzip_rules(&c_examples_dir);
-    write_headers(&c_examples_dir, "mathcat-c.h", Language::C);
-    write_headers(&c_examples_dir, "mathcat.h", Language::Cxx);
+    let examples_dir = PathBuf::from("Example");
+    unzip_rules(&examples_dir);
+    write_headers(&examples_dir, "mathcat-c.h", Language::C);
+    write_headers(&examples_dir, "mathcat.h", Language::Cxx);
 }
 
 fn unzip_rules(location: &Path) {
