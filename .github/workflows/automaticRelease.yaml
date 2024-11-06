@@ -32,6 +32,17 @@ jobs:
           path: 'Example/Rules.zip'
           compression-level: 0
           retention-days: 1
+      - name: Remove Rules dir in prep for uploading test and .h files
+        run: |
+          rm -r Example/Rules
+      - name: Upload Example Dir (.h files, test files)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Example
+          path: Example
+          compression-level: 0
+          retention-days: 1
+
 
   rust-32-win:  
     name: Build 32 bit windows dll
@@ -62,13 +73,6 @@ jobs:
         with:
           name: libmathcat_c.dll-32-win.zip
           path: libmathcat_c.dll-32-win.zip
-          compression-level: 0
-          retention-days: 1
-      - name: Upload Example Dir 
-        uses: actions/upload-artifact@v4
-        with:
-          name: Example
-          path: Example
           compression-level: 0
           retention-days: 1
 
