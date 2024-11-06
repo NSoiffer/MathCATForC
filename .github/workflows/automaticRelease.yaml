@@ -26,21 +26,13 @@ jobs:
           filename: 'Rules.zip'
           directory: 'Example'
           path: 'Rules'
-      - name: Upload Rules.zip 
-        uses: actions/upload-artifact@v4
-        with:
-          name: 'Rules.zip'
-          path: 'Example/Rules.zip'
-          compression-level: 0
-          retention-days: 1
-      - name: Remove Rules dir in prep for uploading test and .h files
+      - name: Remove Rules dir in prep for uploading test, .h files, and Rules.zip
         run: |
           rm -r Example/Rules
-          ls -l Example
       - name: Upload Example Dir (.h files, test files)
         uses: actions/upload-artifact@v4
         with:
-          name: headers-and-tests
+          name: rules-headers-tests
           path: Example
           compression-level: 0
           retention-days: 1
@@ -154,14 +146,10 @@ jobs:
       uses: actions/checkout@v3
 
     # download the previous build artifacts and put them in their proper places
-    - name: Download Rules.zip
+    - name: Download Rules.zip, 2 header files, and 2 test files
       uses: actions/download-artifact@v4
       with:
-        name: Rules.zip
-    - name: Download 2 header files and 2 test files
-      uses: actions/download-artifact@v4
-      with:
-        name: headers-and-tests
+        name: rules-headers-tests
     - name: Download 32 bit build
       uses: actions/download-artifact@v4
       with:
@@ -184,4 +172,5 @@ jobs:
         files: |
           libmathcat*.zip
           Rules.zip
-          Example
+          *.h
+          test.*
