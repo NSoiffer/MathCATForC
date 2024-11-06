@@ -9,7 +9,7 @@ use std::env;
 use cbindgen::*;
 
 fn main() {
-    let c_examples_dir = PathBuf::from("c-example");
+    let c_examples_dir = PathBuf::from("Example");
     unzip_rules(&c_examples_dir);
     write_headers(&c_examples_dir, "mathcat-c.h", Language::C);
     write_headers(&c_examples_dir, "mathcat.h", Language::Cxx);
