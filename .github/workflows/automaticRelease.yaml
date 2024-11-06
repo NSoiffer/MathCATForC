@@ -36,7 +36,7 @@ jobs:
       - name: Remove Rules dir in prep for uploading test and .h files
         run: |
           rm -r Example/Rules
-          ls -l
+          ls -l Example
       - name: Upload Example Dir (.h files, test files)
         uses: actions/upload-artifact@v4
         with:
