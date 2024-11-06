@@ -1,10 +1,8 @@
 // This is a simple test file to show the use of the interface calls and verify that they work in at least these cases.
 //
 // Compile and run this with something like
-//   gcc test.c -o test -L../target/release/ -llibmathcat_c
-//   LD_LIBRARY_PATH="../target/release/" ./test
-// where "../target/release" is the location of libmathcat_c.dll
-// On Windows, this doesn't work. Instead, I copy the library ../target/release/libmathcat_c.dll to this dir and just run "./test".
+//   gcc test.cpp -o test -L. -llibmathcat_c
+// assuming libmathcat_c.dll is in the current directory
 //
 // To run
 // ./test -- prints the MathML input, the speech output (assuming no speech markup), and Nemeth braille
