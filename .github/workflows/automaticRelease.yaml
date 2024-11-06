@@ -23,13 +23,13 @@ jobs:
         with:
           type: 'zip'
           filename: 'Rules.zip'
-          directory: 'addon/globalPlugins/MathCAT'
+          directory: 'Example'
           path: 'Rules'
       - name: Upload Rules.zip 
         uses: actions/upload-artifact@v4
         with:
           name: 'Rules.zip'
-          path: 'addon/globalPlugins/MathCAT/Rules.zip'
+          path: 'Example/Rules.zip'
           compression-level: 0
           retention-days: 1
 
@@ -42,10 +42,10 @@ jobs:
       - name: Build 32 bit version
         run:  cargo build --target i686-pc-windows-msvc --release
       # HOW DO GET A 32 BIT GCC TO RUN? 
-      # - name: Setup Example dir and test build
-      #   run: |
-      #     cp target/i686-pc-windows-msvc/release/libmathcat_c.dll Example/
-      #     cd Example
+      - name: Setup Example dir and test build
+        run: |
+          cp target/i686-pc-windows-msvc/release/libmathcat_c.dll Example/
+          cd Example
       #     gcc -m32 test.cpp -o test -L. -llibmathcat_c
       #     ./test.exe
       #     gcc test.c -o test -L. -llibmathcat_c
