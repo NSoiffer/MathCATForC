@@ -30,7 +30,6 @@ cd -
 cd ${outputDir}
 for dir in *; do
     if [ -d "$dir" ] ; then
-        echo $dir
 		if [ "${dir}" = "aarch64-linux-android" ] ; then
 			mv "aarch64-linux-android" "mathcat-android-arm64"
 		elif [ "$dir" = "armv7-linux-androideabi" ] ; then
