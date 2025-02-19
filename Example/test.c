@@ -120,7 +120,7 @@ bool navTest(const char* mathml, bool doPrint) {
     setPrefsAndMathML(mathml);
 
     const char* nav_speech = DoNavigateCommand("ZoomIn");
-    const char* expected_speech = "m choose n,";
+    const char* expected_speech = "m choose n";
     if (!*nav_speech) {
         const char* message = GetError();
         printf("***Error in navigation speech... Message is: %s\n", message);
