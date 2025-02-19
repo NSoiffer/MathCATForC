@@ -120,7 +120,7 @@ bool navTest(const char* mathml, bool doPrint) {
     setPrefsAndMathML(mathml);
 
     const char* nav_speech = DoNavigateCommand("ZoomIn");
-    const char* expected_speech = "m over n,";
+    const char* expected_speech = "m choose n";
     if (!*nav_speech) {
         const char* message = GetError();
         printf("***Error in navigation speech... Message is: %s\n", message);
@@ -135,7 +135,7 @@ bool navTest(const char* mathml, bool doPrint) {
     }
 
 
-    if (!navGetLocationTest(GetNavigationLocation(), "choose", 0, doPrint)) {
+    if (!navGetLocationTest(GetNavigationLocation(), "mrow-1", 0, doPrint)) {
         return false;
     }
     if (!navGetLocationTest(GetNavigationLocationFromBraillePosition(1), "id-m", 0, doPrint)) {
@@ -190,8 +190,10 @@ void testForMemoryLeak(const char* mathml, int nLoops) {
 
 int main(int argc, char *argv[]) {
     const char* mathml = "<math>\n\
-      <mo>(</mo><mfrac linethickness='0' id='choose'><mi id='id-m'>m</mi><mi>n</mi></mfrac><mo>)</mo>\n\
-      <mo>(</mo><msqrt><msup id='id-m-squared'><mi>m</mi><mn>2</mn></msup><mo>+</mo><mi>n</mi></msqrt><mo>)</mo>\n\
+        <mrow id='outer-mrow'>\n\
+            <mrow id='mrow-1'><mo>(</mo><mfrac linethickness='0' id='choose'><mi id='id-m'>m</mi><mi>n</mi></mfrac><mo>)</mo></mrow>\n\
+            <mrow id='mrow-2'><mo>(</mo><msqrt id='msqrt'><msup id='id-m-squared'><mi>m</mi><mn>2</mn></msup><mo>+</mo><mi>n</mi></msqrt><mo>)</mo></mrow>\n\
+        </mrow>\n\
     </math>";
 
     const char* version = GetMathCATVersion();
