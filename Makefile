@@ -18,7 +18,7 @@ define dependencies
 [dependencies.mathcat]
 version = $(mathcatVersion)
 # for testing MathCAT without having to publish a new version (change here and in build-dependencies)
-# path = "../MathCAT/"
+path = "../MathCAT/"
 features = ["include-zip"]   # for building, we want the zip files so we can include them separately
 
 endef
@@ -41,9 +41,12 @@ cbindgen = "0.24"
 # mathcat = {path = "../MathCAT/", version = $(mathcatVersion), features = ["include-zip"]}
 #mathcat = { version = $(mathcatVersion), features = ["include-zip"]} # for building, we want the zip files so we can include them separately
 
+[target.'cfg(target_os = "windows")'.build-dependencies]
+embed-resource = "2.5"
 
 endef
 export builder
+
 define builder_local
 [build-dependencies]
 zip = { version = "2.1", default-features = false, features = ["bzip2"] }
@@ -52,6 +55,8 @@ cbindgen = "0.24"
 mathcat = {path = "../MathCAT/", version = $(mathcatVersion), features = ["include-zip"]}
 # mathcat = { version = $(mathcatVersion), features = ["include-zip"]} # for building, we want the zip files so we can include them separately
 
+[target.'cfg(target_os = "windows")'.build-dependencies]
+embed-resource = "2.5"
 
 endef
 export builder_local
