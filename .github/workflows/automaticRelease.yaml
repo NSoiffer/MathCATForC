@@ -86,8 +86,7 @@ jobs:
           name: rules-headers-tests
       - name: Unzip Rules.zip
         run: |
-          unzip Rules.zip -d Example/Rules
-          ls -l Example
+          unzip Rules.zip -d Example
           ls -l Example/Rules
       - name: Setup Example dir and test build
         run: |
