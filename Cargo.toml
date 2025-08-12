@@ -1,28 +1,26 @@
 [package]
 name = "mathcat_c"
-version = "0.6.8"
+version = "0.7.0-rc.2"
 authors = ["Neil Soiffer <soiffer@alum.mit.edu>"]
 edition = "2021"
 license = "MIT"
 description = "C/C++ interface for MathCAT (for MathCAT info, see crates.io or nsoiffer.github.io/MathCAT)"
 resolver = "2"    # allows different build dependency features
 
-[dependencies.mathcat]
-version = "0.6.8"
-# for testing MathCAT without having to publish a new version (change here and in build-dependencies)
-# path = "../MathCAT/"
-features = ["include-zip"]   # for building, we want the zip files so we can include them separately
+[dependencies]
+mathcat = { version = "0.7.0-rc.2"}  # for building, we want the zip files so we can include them separately
+# mathcat = { path= "../MathCAT/"}  # for building, we want the zip files so we can include them separately
 
 [lib]
 name = "libmathcat_c"
 crate-type = ["cdylib"]      # Creates dynamic lib
 
 [build-dependencies]
-zip = { version = "2.1", default-features = false, features = ["bzip2"] }
-cbindgen = "0.24"
+zip = { version = "4.3", default-features = false, features = ["bzip2"] }
+cbindgen = "0.29"
 # for testing MathCAT without having to publish a new version (change two occurences)
-# mathcat = {path = "../MathCAT/", version = "0.6.6", features = ["include-zip"]}     # for building, we want the zip files so we can include them separately
-mathcat = {version = "0.6.8", features = ["include-zip"]}     # for building, we want the zip files so we can include them separately
+mathcat = {version = "0.7.0-rc.2"}     # for building, we want the zip files so we can include them separately
+# mathcat = {path = "../MathCAT/" }     # for building, we want the zip files so we can include them separately
 
 [profile.release]
 debug = true

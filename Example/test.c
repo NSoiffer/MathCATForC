@@ -1,7 +1,7 @@
 // This is a simple test file to show the use of the interface calls and verify that they work in at least these cases.
 //
 // Compile and run this with something like
-//   gcc test.cpp -o test -L. -llibmathcat_c
+//   gcc test.c -o test -L. -llibmathcat_c
 // assuming libmathcat_c.dll is in the current directory
 //
 // To run
@@ -34,6 +34,9 @@ bool setPrefsAndMathML(const char* mathml) {
         return false;
     };
     if (!SetMathCatPreference("SpeechStyle", "SimpleSpeak")) {
+        return false;
+    };
+    if (!SetMathCatPreference("Verbosity", "Medium")) {
         return false;
     };
     if (!SetMathCatPreference("TTS", "None")) {
@@ -176,6 +179,39 @@ bool navTest(const char* mathml, bool doPrint) {
     return true;
 }
 
+bool testGetInfo(CStringArray *array, const char* type, int expected_min) {
+    printf("%d %s:", array->len, type);
+    for (int i = 0; i < array->len; i++) {
+        printf("%s '%s'", i==0 ? "" : ",", array->data[i]);
+    }
+    printf("\n");
+    if (array->len < expected_min) {
+        printf("***Error in getting supported %s... expected at least %d\n", type, array->len);
+        FreeMathCATStringArray(*array);
+        return false;
+    }
+    FreeMathCATStringArray(*array);
+    return true;
+}
+
+bool supportedRules() {
+    CStringArray brailleCodes = GetSupportedBrailleCodes();
+    if (!testGetInfo(&brailleCodes, "braille codes", 5)) {
+        return false;
+    }
+
+    CStringArray languages = GetSupportedLanguages();
+    if (!testGetInfo(&languages, "languages", 5)) {
+        return false;
+    }
+
+    CStringArray speechStyles = GetSupportedSpeechStyles("en");
+    if (!testGetInfo(&speechStyles, "speech styles", 2)) {
+        return false;
+    }
+    return true;
+}
+
 #include <time.h>
 
 void testForMemoryLeak(const char* mathml, int nLoops) {
@@ -201,7 +237,7 @@ int main(int argc, char *argv[]) {
     FreeMathCATString((char*)version);
 
     const char* rulesDirResult = SetRulesDir("./Rules");
-    if (rulesDirResult == "") { // empty strings are signs of an error
+    if (*rulesDirResult == '\0') { // empty strings are signs of an error
         const char* message = GetError();
         printf("Did not find Rules dir. Message is: %s\n", message);
         FreeMathCATString((char*)message);
@@ -217,6 +253,10 @@ int main(int argc, char *argv[]) {
 
     if (!navTest(mathml, true)) {
         printf("'navTest' returned failure\n");
+        exit(1);
+    }
+
+    if (!supportedRules()) {
         exit(1);
     }
 

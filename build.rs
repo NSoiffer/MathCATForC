@@ -4,23 +4,24 @@
 extern crate cbindgen;
 
 use std::path::{PathBuf, Path};
-use zip::ZipArchive;
 use std::env;
 use cbindgen::*;
 
+
+// use zip::ZipArchive;
+// fn unzip_rules(location: &Path) {
+//     let archive = libmathcat::ZIPPED_RULE_FILES;
+//     let archive = std::io::Cursor::new(archive);
+
+//     let mut zip_archive = ZipArchive::new(archive).unwrap();
+//     zip_archive.extract(location).expect("Zip extraction failed");
+// }
+
 fn main() {
     let examples_dir = PathBuf::from("Example");
-    unzip_rules(&examples_dir);
+    // unzip_rules(&examples_dir);
     write_headers(&examples_dir, "mathcat-c.h", Language::C);
     write_headers(&examples_dir, "mathcat.h", Language::Cxx);
-}
-
-fn unzip_rules(location: &Path) {
-    let archive = libmathcat::ZIPPED_RULE_FILES;
-    let archive = std::io::Cursor::new(archive);
-
-    let mut zip_archive = ZipArchive::new(archive).unwrap();
-    zip_archive.extract(location).expect("Zip extraction failed");
 }
 
 fn write_headers(location: &Path, name: &str, header_style: cbindgen::Language) {
