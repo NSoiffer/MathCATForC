@@ -8,20 +8,23 @@ use std::env;
 use cbindgen::*;
 
 
+#[cfg(feature = "include-zip")]
 use zip::ZipArchive;
+#[cfg(feature = "include-zip")]
 fn unzip_rules(location: &Path) {
-    let archive = libmathcat::ZIPPED_RULE_FILES;
-    let archive = std::io::Cursor::new(archive);
+        let archive = libmathcat::ZIPPED_RULE_FILES;
+        let archive = std::io::Cursor::new(archive);
 
-    let mut zip_archive = ZipArchive::new(archive).unwrap();
-    zip_archive.extract(location).expect("Zip extraction failed");
+        let mut zip_archive = ZipArchive::new(archive).unwrap();
+        zip_archive.extract(location).expect("Zip extraction failed");
 }
 
 fn main() {
     let examples_dir = PathBuf::from("Example");
-    if std::env::var("CARGO_FEATURE_INCLUDE_ZIP").is_ok() {
-        unzip_rules(&examples_dir);
-    }
+
+    #[cfg(feature = "include-zip")]
+    unzip_rules(&examples_dir);
+    
     write_headers(&examples_dir, "mathcat-c.h", Language::C);
     write_headers(&examples_dir, "mathcat.h", Language::Cxx);
 }

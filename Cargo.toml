@@ -19,6 +19,7 @@ name = "libmathcat_c"
 crate-type = ["cdylib"]      # Creates dynamic lib
 
 [build-dependencies]
+cfg-if = "1.0.1"
 zip = { version = "4.3", default-features = false, features = ["bzip2"] }
 cbindgen = "0.29"
 # for testing MathCAT without having to publish a new version (change two occurences)
