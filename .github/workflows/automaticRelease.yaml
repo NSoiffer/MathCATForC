@@ -18,7 +18,7 @@ jobs:
       - name: Build Rust Library 
         run: |
           # doesn't need a release build since all that we want is the Rules dir and the .h files
-          cargo build --target x86_64-unknown-linux-gnu
+          cargo build --target x86_64-unknown-linux-gnu --features include-zip
       - name: create rules.zip
         uses: thedoctor0/zip-release@0.7.5
         with:
@@ -72,6 +72,7 @@ jobs:
 
   rust-64-win:  
     name: Build 64 bit windows dll
+    needs: [rules-headers-tests]
     runs-on: windows-latest  # needs to run on windows because of bzip2
     steps:
       - name: Checkout code
@@ -79,6 +80,14 @@ jobs:
       - name: Build 64 bit version
         run:  cargo build --target x86_64-pc-windows-msvc --release
       #
+      - name: Download Rules.zip
+        uses: actions/download-artifact@v4
+        with:
+          name: rules-headers-tests
+      - name: Unzip Rules.zip
+        run: |
+          unzip Rules.zip -d Example
+          ls -l Example/Rules
       - name: Setup Example dir and test build
         run: |
           cp target/x86_64-pc-windows-msvc/release/libmathcat_c.dll Example/

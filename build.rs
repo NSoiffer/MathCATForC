@@ -2,24 +2,15 @@
 //! rules.zip are needed so there is a way to get the rules dir into the build since you can't get it from the crate.
 
 extern crate cbindgen;
-#[cfg(target_os = "windows")]
-extern crate embed_resource;
 
 use std::path::{PathBuf, Path};
-use zip::ZipArchive;
 use std::env;
 use cbindgen::*;
 
 #[cfg(target_os = "windows")]
+extern crate embed_resource;
+#[cfg(target_os = "windows")]
 use std::fs;
-
-fn main() {
-    let examples_dir = PathBuf::from("Example");
-    unzip_rules(&examples_dir);
-    write_headers(&examples_dir, "mathcat-c.h", Language::C);
-    write_headers(&examples_dir, "mathcat.h", Language::Cxx);
-	embed_description();
-}
 
 fn embed_description() {	
 
@@ -57,12 +48,27 @@ END");
 	}
 }
 
+#[cfg(feature = "include-zip")]
+use zip::ZipArchive;
+#[cfg(feature = "include-zip")]
 fn unzip_rules(location: &Path) {
-    let archive = libmathcat::ZIPPED_RULE_FILES;
-    let archive = std::io::Cursor::new(archive);
+        let archive = libmathcat::ZIPPED_RULE_FILES;
+        let archive = std::io::Cursor::new(archive);
 
-    let mut zip_archive = ZipArchive::new(archive).unwrap();
-    zip_archive.extract(location).expect("Zip extraction failed");
+        let mut zip_archive = ZipArchive::new(archive).unwrap();
+        zip_archive.extract(location).expect("Zip extraction failed");
+}
+
+fn main() {
+    let examples_dir = PathBuf::from("Example");
+
+    #[cfg(feature = "include-zip")]
+    unzip_rules(&examples_dir);
+    
+    write_headers(&examples_dir, "mathcat-c.h", Language::C);
+    write_headers(&examples_dir, "mathcat.h", Language::Cxx);
+
+	embed_description();
 }
 
 fn write_headers(location: &Path, name: &str, header_style: cbindgen::Language) {

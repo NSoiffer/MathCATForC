@@ -342,23 +342,50 @@ pub extern "C" fn GetNavigationLocationFromBraillePosition(position: u32) -> Nav
     }
 }
 
-// #[cfg(test)]
-// mod py_tests {
-//     use super::*;
+#[repr(C)]
+pub struct CStringArray {
+    pub data: *mut *mut c_char,
+    pub len: usize,
+}
 
-//     #[test]
-//     fn test_setting() {
-//         // this isn't a real test
-//         pyo3::prepare_freethreaded_python();
-//         let mathml_str = "<math><mo>(</mo><mrow><mn>451</mn><mo>,</mo><mn>231</mn></mrow><mo>)</mo></math>";
-//         match set_error( libmathcat::interface::set_mathml(mathml_str.to_string()) ) {
-//             Ok(_mathml_with_ids) => println!("MathML is set w/o error"),
-//             Err(e) => println!("Error is {}", e.to_string()),
-//         }
-//         // still alive?
-//         match set_error( libmathcat::interface::set_mathml(mathml_str.to_string()) ) {
-//             Ok(_mathml_with_ids) => panic!("MathML is set 2nd time w/o error"),
-//             Err(e) => panic!("Error remains {}", e.to_string()),
-//         }
-//     }
-// }
+#[no_mangle]
+/// Call this when you are done with the CStringArray returned by a function.
+pub extern "C" fn FreeMathCATStringArray(array: CStringArray) {
+    unsafe {
+        let mut vec = Vec::from_raw_parts(array.data, array.len, array.len); // Reconstruct Vec
+        for ptr in vec.drain(..) {
+            let _ = CString::from_raw(ptr); // Reconstruct CString to drop it
+        }
+    }
+}
+
+#[no_mangle]
+/// Return the braille codes that are supported in this version of MathCAT.
+/// If there is an error, the id is set to an empty string (use GetError()).
+pub extern "C" fn GetSupportedBrailleCodes() -> CStringArray {
+    return vec_to_cstring_array(libmathcat::get_supported_braille_codes());
+}
+
+#[no_mangle]
+/// Return the braille codes that are supported in this version of MathCAT.
+/// If there is an error, the id is set to an empty string (use GetError()).
+pub extern "C" fn GetSupportedLanguages() -> CStringArray {
+    return vec_to_cstring_array(libmathcat::get_supported_languages());
+}
+
+#[no_mangle]
+/// Return the braille codes that are supported in this version of MathCAT.
+/// If there is an error, the id is set to an empty string (use GetError()).
+pub extern "C" fn GetSupportedSpeechStyles(language: *const c_char) -> CStringArray {
+    return vec_to_cstring_array(libmathcat::get_supported_speech_styles(safe_string(language)));
+}
+
+fn vec_to_cstring_array(vec: Vec<String>) -> CStringArray {
+    let mut c_strings: Vec<*mut c_char> = vec.iter()
+        .map(|s| CString::new(s.as_bytes()).expect(ILLEGAL_STRING).into_raw())
+        .collect();
+    let len = c_strings.len();
+    let data = c_strings.as_mut_ptr();
+    std::mem::forget(c_strings); // prevent Rust from freeing the memory
+    return CStringArray { data, len };
+}
