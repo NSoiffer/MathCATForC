@@ -1,26 +1,27 @@
-outputDir="MathCat"
-rulesDir="c-example/Rules"
-headerFile="c-example/mathcat.h"
+outputDir="../Builds"
+rulesDir="../Example/Rules"
+headerDir="../Example"
 
 if [ -n "$1" ]; then 
-    outputDir="MathCat/$1"
+    outputDir="${outputDir}/$1"
 fi
 
 mkdir -p ${outputDir}
 
-cp  -r "c-example/Rules" "${outputDir}/"
+cp  -r "${rulesDir}" "${outputDir}/"
 
-cd target
+cd "../target"
 for dir in *; do
     if [ -d "$dir" ] ; then
         echo $dir
         for file in $(find "$dir" -name "*mathcat_c.a" -o -name "*mathcat_c.so" -o -name "*mathcat_c.dll*");
         do
-            mkdir "../${outputDir}/${dir}"
-            mkdir "../${outputDir}/${dir}/include/"
-            cp  "../${headerFile}" "../${outputDir}/${dir}/include/"
-            mkdir "../${outputDir}/${dir}/lib/"
-            cp  "$file" "../${outputDir}/${dir}/lib/"
+            mkdir "${outputDir}/${dir}"
+            mkdir "${outputDir}/${dir}/include/"
+            cp  "${headerDir}/mathcat.h" "${outputDir}/${dir}/include/"
+            cp  "${headerDir}/mathcat-c.h" "${outputDir}/${dir}/include/"
+            mkdir "${outputDir}/${dir}/lib/"
+            cp  "$file" "${outputDir}/${dir}/lib/"
             echo $file
         done
     fi
