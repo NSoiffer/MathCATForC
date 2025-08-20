@@ -19,6 +19,7 @@ for dir in *; do
             mkdir "${outputDir}/${dir}"
             mkdir "${outputDir}/${dir}/include/"
             cp  "${headerDir}/mathcat.h" "${outputDir}/${dir}/include/"
+            cp  "${headerDir}/mathcat-c.h" "${outputDir}/${dir}/include/"
             mkdir "${outputDir}/${dir}/lib/"
             cp  "$file" "${outputDir}/${dir}/lib/"
             echo $file
