@@ -32,8 +32,10 @@ cd ${outputDir}
 for dir in *; do
     if [ -d "$dir" ] ; then
 		if [ "${dir}" = "aarch64-linux-android" ] ; then
+            rm -rf "mathcat-android-arm64"
 			mv "aarch64-linux-android" "mathcat-android-arm64"
 		elif [ "$dir" = "armv7-linux-androideabi" ] ; then
+            rm -rf "mathcat-android-arm"
 			mv "armv7-linux-androideabi" "mathcat-android-arm"
 		fi
     fi
