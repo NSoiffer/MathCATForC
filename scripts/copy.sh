@@ -14,12 +14,11 @@ cd "../target"
 for dir in *; do
     if [ -d "$dir" ] ; then
         echo $dir
-        for file in $(find "$dir" -name "*mathcat_c.a" -o -name "*mathcat_c.so" -o -name "*mathcat_c.dll*");
+        for file in $(find "$dir" -name "*mathcat_c.a" -o -name "*mathcat_c.so" -o -name "*mathcat_c.dll*" -o -name "*libmathcat_c.pdb");
         do
             mkdir "${outputDir}/${dir}"
             mkdir "${outputDir}/${dir}/include/"
             cp  "${headerDir}/mathcat.h" "${outputDir}/${dir}/include/"
-            cp  "${headerDir}/mathcat-c.h" "${outputDir}/${dir}/include/"
             mkdir "${outputDir}/${dir}/lib/"
             cp  "$file" "${outputDir}/${dir}/lib/"
             echo $file
