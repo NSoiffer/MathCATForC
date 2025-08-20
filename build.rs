@@ -15,26 +15,26 @@ use std::fs;
 fn embed_description() {	
 
     #[cfg(target_os = "windows")] {
-		let name: &str = option_env!("CARGO_PKG_NAME").unwrap_or("");
-		let version_major: &str = option_env!("CARGO_PKG_VERSION_MAJOR").unwrap_or("0");
-		let version_minor: &str = option_env!("CARGO_PKG_VERSION_MINOR").unwrap_or("0");
-		let version_patch: &str = option_env!("CARGO_PKG_VERSION_PATCH").unwrap_or("0");
-		let authors: &str = option_env!("CARGO_PKG_AUTHORS").unwrap_or("");
-		let description: &str = option_env!("CARGO_PKG_DESCRIPTION").unwrap_or("");
-		let license: &str = option_env!("CARGO_PKG_LICENSE").unwrap_or("");
+		let _name: &str = option_env!("CARGO_PKG_NAME").unwrap_or("");
+		let _version_major: &str = option_env!("CARGO_PKG_VERSION_MAJOR").unwrap_or("0");
+		let _version_minor: &str = option_env!("CARGO_PKG_VERSION_MINOR").unwrap_or("0");
+		let _version_patch: &str = option_env!("CARGO_PKG_VERSION_PATCH").unwrap_or("0");
+		let _authors: &str = option_env!("CARGO_PKG_AUTHORS").unwrap_or("");
+		let _description: &str = option_env!("CARGO_PKG_DESCRIPTION").unwrap_or("");
+		let _license: &str = option_env!("CARGO_PKG_LICENSE").unwrap_or("");
 
 
 		let data = format!("1 VERSIONINFO
-FILEVERSION {version_major},{version_minor},{version_patch}
+FILEVERSION {_version_major},{_version_minor},{_version_patch}
 
 BEGIN
 	BLOCK \"StringFileInfo\"
 	BEGIN
 		BLOCK \"040904b0\"
 		BEGIN
-			VALUE \"FileDescription\", \"{description}\"
-			VALUE \"ProductName\", \"{name}\"
-			VALUE \"ProductVersion\", \"{version_major}.{version_minor}.{version_patch}\"
+			VALUE \"FileDescription\", \"{_description}\"
+			VALUE \"ProductName\", \"{_name}\"
+			VALUE \"ProductVersion\", \"{_version_major}.{_version_minor}.{_version_patch}\"
 		END
 	END
 	BLOCK \"VarFileInfo\"
