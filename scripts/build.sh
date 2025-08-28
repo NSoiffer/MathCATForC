@@ -29,7 +29,7 @@ if [ "$1" = "ios" ]; then
      
     cd "$(dirname "$0")/.."
     rustc --target x86_64-apple-ios-macabi --print deployment-target
-    cargo +nightly build -Z build-std --release --lib --target x86_64-apple-ios-macabi --target-dir "./target/mathcat-catalyst-x64"
+    cargo build --release --lib --target x86_64-apple-ios-macabi  --target-dir "./target/mathcat-catalyst-x64"
     cd -
 	
 
