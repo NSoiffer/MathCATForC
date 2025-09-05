@@ -7,6 +7,46 @@ use std::path::{PathBuf, Path};
 use std::env;
 use cbindgen::*;
 
+#[cfg(target_os = "windows")]
+extern crate embed_resource;
+#[cfg(target_os = "windows")]
+use std::fs;
+
+fn embed_description() {	
+
+    #[cfg(target_os = "windows")] {
+		let _name: &str = option_env!("CARGO_PKG_NAME").unwrap_or("");
+		let _version_major: &str = option_env!("CARGO_PKG_VERSION_MAJOR").unwrap_or("0");
+		let _version_minor: &str = option_env!("CARGO_PKG_VERSION_MINOR").unwrap_or("0");
+		let _version_patch: &str = option_env!("CARGO_PKG_VERSION_PATCH").unwrap_or("0");
+		let _authors: &str = option_env!("CARGO_PKG_AUTHORS").unwrap_or("");
+		let _description: &str = option_env!("CARGO_PKG_DESCRIPTION").unwrap_or("");
+		let _license: &str = option_env!("CARGO_PKG_LICENSE").unwrap_or("");
+
+
+		let data = format!("1 VERSIONINFO
+FILEVERSION {_version_major},{_version_minor},{_version_patch}
+
+BEGIN
+	BLOCK \"StringFileInfo\"
+	BEGIN
+		BLOCK \"040904b0\"
+		BEGIN
+			VALUE \"FileDescription\", \"{_description}\"
+			VALUE \"ProductName\", \"{_name}\"
+			VALUE \"ProductVersion\", \"{_version_major}.{_version_minor}.{_version_patch}\"
+		END
+	END
+	BLOCK \"VarFileInfo\"
+	BEGIN
+		VALUE \"Translation\", 0x409, 1200
+	END
+END");
+		fs::write("version.rc", data).expect("Unable to write file");
+		embed_resource::compile("version.rc", embed_resource::NONE);
+	
+	}
+}
 
 #[cfg(feature = "include-zip")]
 use zip::ZipArchive;
@@ -27,6 +67,8 @@ fn main() {
     
     write_headers(&examples_dir, "mathcat-c.h", Language::C);
     write_headers(&examples_dir, "mathcat.h", Language::Cxx);
+
+	embed_description();
 }
 
 fn write_headers(location: &Path, name: &str, header_style: cbindgen::Language) {
