@@ -13,3 +13,7 @@ c-example/vc140.pdb
 c-example/*zip
 c-example/Release
 c-example/Rules
+*.DS_Store
+MathCat
+version.rc
+Builds/*
