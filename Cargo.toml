@@ -1,6 +1,6 @@
 [package]
 name = "mathcat_c"
-version = "0.7.0"
+version = "0.7.2-rc.1"
 authors = ["Neil Soiffer <soiffer@alum.mit.edu>"]
 edition = "2021"
 license = "MIT"
@@ -11,7 +11,7 @@ resolver = "2"    # allows different build dependency features
 "include-zip" = ["mathcat/include-zip"]  # include the zip files in the build
 
 [dependencies]
-mathcat = {version = "0.7.0"}
+mathcat = {version = "0.7.2-rc.1"}
 # mathcat = {path= "../MathCAT/"}  # for building, we want the zip files so we can include them separately
 
 [lib]
@@ -20,10 +20,10 @@ crate-type = ["cdylib"]      # Creates dynamic lib
 
 [build-dependencies]
 cfg-if = "1.0.1"
-zip = { version = "4.3", default-features = false, features = ["bzip2"] }
+zip = { version = "5.1", default-features = false, features = ["bzip2"] }
 cbindgen = "0.29"
 # for testing MathCAT without having to publish a new version (change two occurrences)
-mathcat = {version = "=0.7.0", features = ["include-zip"]}     # for building, we want the zip files so we can include them separately
+mathcat = {version = "=0.7.2-rc.1", features = ["include-zip"]}     # for building, we want the zip files so we can include them separately
 # mathcat = {path = "../MathCAT/" , features = ["include-zip"]}     # for building, we want the zip files so we can include them separately
 
 [target.'cfg(target_os = "windows")'.build-dependencies]
