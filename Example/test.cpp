@@ -62,7 +62,7 @@ bool singleTest(const char* mathml, bool doPrint) {
     }
 
     const char* speech = GetSpokenText();
-    const char* expected_speech = "m choose n times; open paren, the square root of m squared plus n end root; close paren";
+    const char* expected_speech = "m choose n times; open paren, the square root of m squared plus n, end root; close paren";
     if (!*speech) {
         const char* message = GetError();
         printf("***Error in speech --ignoring... Message is: %s\n", message);
